@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
     <File Path="compose.yaml" />
   </Folder>
   <Project Path="Server/Server.csproj" />
