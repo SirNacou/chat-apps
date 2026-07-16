@@ -1,0 +1,23 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+      target: build
+      args:
+        BUILD_CONFIGURATION: Debug
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+    develop:
+      watch:
+        - path: ./Server
+          action: sync
+          target: /src/Server
+
+#    environment:
+#      ASPNETCORE_ENVIRONMENT: Development
+    # ⚡ 4. Override the entrypoint to run the .NET Watch compiler engine natively
+    command: dotnet watch run --no-launch-profile --urls http://+:8080

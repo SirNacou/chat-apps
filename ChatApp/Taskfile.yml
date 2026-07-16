@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: "Start local development with hot-reload (dotnet watch)"
+    cmds:
+      - docker compose -f compose.yaml -f compose.dev.yaml watch
+
+  build-dev:
+    desc: "Force a clean, uncached build for the dev environment"
+    cmds:
+      - docker compose -f compose.yaml -f compose.dev.yaml build --no-cache
+
+  prod:
+    desc: "Simulate or run a clean production build stage"
+    cmds:
+      - docker compose -f compose.yaml up -d --build
+
+  down:
+    desc: "Stop all running containers and wipe orphaned resources"
+    cmds:
+      - docker compose -f compose.yaml down --remove-orphans
+
+  clean:
+    desc: "Stop infrastructure and completely destroy stored database volumes"
+    cmds:
+      - docker compose -f compose.yaml down -v

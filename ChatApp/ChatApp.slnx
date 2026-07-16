@@ -2,7 +2,11 @@
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
     <File Path=".editorconfig" />
+    <File Path=".env" />
+    <File Path=".env.example" />
+    <File Path="compose.dev.yaml" />
     <File Path="compose.yaml" />
+    <File Path="Taskfile.yml" />
   </Folder>
   <Project Path="Server/Server.csproj" />
 </Solution>

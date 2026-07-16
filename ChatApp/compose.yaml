@@ -4,22 +4,48 @@
     build:
       context: .
       dockerfile: Server/Dockerfile
+      target: server # 🎯 Triggers the self-contained server stage
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - dp_keys:/home/app/.aspnet/DataProtection-Keys
+    depends_on:
+      migration-runner:
+        condition: service_completed_successfully
+
+  migration-runner:
+    image: migration-runner
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+      target: migration # 🎯 Triggers the self-contained migration stage
+    container_name: chat_migration_runner
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:18-alpine
     container_name: postgres
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql
     shm_size: 256mb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
+  dp_keys:
+
