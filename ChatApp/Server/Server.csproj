@@ -6,21 +6,26 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateSerializerContexts>true</GenerateSerializerContexts>
+    <SerializerContextOutputPath>Generated/SerializerCtx</SerializerContextOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="8.2.0"/>
+    <PackageReference Include="FastEndpoints.Generator" Version="8.2.0"/>
+    <PackageReference Include="FastEndpoints.Swagger" Version="8.2.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10"/>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.10"/>
     <!--  Have to explicit use this version because of security issue and can't use version 3.x because dotnet 10 not compatible https://github.com/advisories/GHSA-v5pm-xwqc-g5wc -->
-    <PackageReference Include="Microsoft.OpenApi" Version="2.10.0"/>
+    <PackageReference Include="Microsoft.OpenApi" Version="2.11.0"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.16.12" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.29.0.143774">
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.12"/>
+    <PackageReference Include="SonarAnalyzer.CSharp" Condition="'$(Configuration)' == 'Debug'" Version="10.29.0.143774">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

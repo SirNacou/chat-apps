@@ -1,3 +1,9 @@
+global using FluentValidation;
+using System.Text.Json;
+
+using FastEndpoints;
+using FastEndpoints.Swagger;
+
 using Microsoft.AspNetCore.Identity;
 
 using Scalar.AspNetCore;
@@ -8,9 +14,9 @@ using Server.Infrastructure.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddFastEndpoints();
+builder.Services.SwaggerDocument();
+builder.Services.AddOpenApi("identity");
 
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.SectionName));
 
@@ -24,9 +30,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-    Console.WriteLine("Debug");
+    app.MapOpenApi("/openapi/identity/{documentName}.json");
+    app.UseSwaggerGen(options =>
+    {
+        options.Path = "/openapi/{documentName}.json";
+    });
+    app.MapScalarApiReference("/docs", options =>
+    {
+        options.AddDocument("identity", "Identity API", "/openapi/identity/{documentName}.json");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -59,5 +71,13 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast")
     .RequireAuthorization();
+
+app.UseFastEndpoints(c =>
+{
+    c.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+
+    c.Serializer.Options.AddSerializerContextsFromServer();
+});
+
 
 await app.RunAsync();

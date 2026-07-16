@@ -11,6 +11,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_NON_INTERACTIVE: 1
     develop:
       watch:
         - path: ./Server
@@ -20,4 +21,4 @@ services:
 #    environment:
 #      ASPNETCORE_ENVIRONMENT: Development
     # ⚡ 4. Override the entrypoint to run the .NET Watch compiler engine natively
-    command: dotnet watch run --no-launch-profile --urls http://+:8080
+    command: dotnet watch --non-interactive --no-launch-profile --urls http://+:8080

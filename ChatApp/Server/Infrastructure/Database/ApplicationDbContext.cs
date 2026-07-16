@@ -8,7 +8,9 @@ using Server.Infrastructure.Options;
 
 namespace Server.Infrastructure.Database;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IOptions<DatabaseOptions> databaseOptions)
+public class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    IOptions<DatabaseOptions> databaseOptions)
     : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<Room> Rooms { get; set; }
@@ -16,6 +18,22 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        base.OnConfiguring(optionsBuilder);
+
         optionsBuilder.UseNpgsql(databaseOptions.Value.ConnectionString);
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        configurationBuilder.Properties<Enum>().HaveConversion<string>();
     }
 }

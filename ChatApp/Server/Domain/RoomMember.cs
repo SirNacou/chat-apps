@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Server.Domain;
 
-public class RoomMember
+public sealed class RoomMember
 {
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; init; } = null!;
 
-    public Guid RoomId { get; set; }
+    public Guid RoomId { get; init; }
+
+    public Room Room { get; init; } = null!;
 }

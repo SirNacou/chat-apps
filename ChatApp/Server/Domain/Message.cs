@@ -1,6 +1,6 @@
 namespace Server.Domain;
 
-public class Message
+internal sealed class Message
 {
     public Guid Id { get; set; }
     public Guid RoomId { get; set; }

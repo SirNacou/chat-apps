@@ -1,25 +1,57 @@
 namespace Server.Domain;
 
-public class Room
+public sealed class Room
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public bool IsDirectMessage { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public RoomType Type { get; init; }
+    public DateTimeOffset CreatedAt { get; init; }
 
-    public List<RoomMember> Members { get; set; }
+    private readonly List<RoomMember> _members;
+    public IReadOnlyCollection<RoomMember> Members => _members.AsReadOnly();
 
-    public static Room Create(string name, bool isDirectMessage)
+    public static Room CreateGroupRoom(string name, string creatorId)
     {
-        return new Room(name, isDirectMessage);
+        var room = new Room(name, RoomType.Group);
+        room.AddMembers([creatorId]);
+
+        return room;
     }
 
-    private Room(string name, bool isDirectMessage)
+    public static Room CreateDirectMessageRoom(string creatorId, string recipientId)
+    {
+        var room = new Room("", RoomType.DirectMessage);
+        room.AddMembers([creatorId, recipientId]);
+        return room;
+    }
+
+    public void AddMembers(IReadOnlyCollection<string> userIds)
+    {
+        if (userIds.Count == 0)
+            return;
+
+        if (_members.Any(m => userIds.Contains(m.UserId)))
+        {
+            throw new InvalidOperationException("User is already a member of the room.");
+        }
+
+        _members.AddRange(
+            userIds.Select(userId => new RoomMember { UserId = userId, RoomId = Id })
+        );
+    }
+
+    private Room(string name, RoomType type)
     {
         Id = Guid.CreateVersion7();
         Name = name;
-        IsDirectMessage = isDirectMessage;
+        Type = type;
         CreatedAt = DateTimeOffset.UtcNow;
-        Members = [];
+        _members = [];
     }
+}
+
+public enum RoomType
+{
+    Group,
+    DirectMessage
 }
