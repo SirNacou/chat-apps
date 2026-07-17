@@ -1,11 +1,13 @@
 global using FluentValidation;
 
+global using LanguageExt;
+
+global using static LanguageExt.Prelude;
+
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 using FastEndpoints;
 using FastEndpoints.OpenApi;
-using FastEndpoints.Swagger;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +17,7 @@ using Server;
 using Server.Infrastructure.Database;
 using Server.Infrastructure.Options;
 using Server.Infrastructure.Serializers;
+using Server.Modules.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,8 @@ builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -79,5 +84,7 @@ app.UseFastEndpoints(c =>
     c.Serializer.Options.Converters.Add(TrimmingStringConverter.Instance);
     c.Serializer.Options.AddSerializerContextsFromServer();
 });
+
+app.MapHub<ChatHub>("/chathub");
 
 await app.RunAsync();
