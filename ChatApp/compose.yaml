@@ -5,6 +5,7 @@
       context: .
       dockerfile: Server/Dockerfile
       target: server # 🎯 Triggers the self-contained server stage
+    container_name: chat_server
     ports:
       - "8080:8080"
     env_file:

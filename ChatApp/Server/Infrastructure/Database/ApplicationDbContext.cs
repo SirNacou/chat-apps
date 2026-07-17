@@ -15,6 +15,7 @@ public class ApplicationDbContext(
 {
     public DbSet<Room> Rooms { get; set; }
     public DbSet<RoomMember> RoomMembers { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

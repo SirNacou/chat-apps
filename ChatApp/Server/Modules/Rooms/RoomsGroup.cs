@@ -10,7 +10,7 @@ public sealed class RoomsGroup : Group
         {
             ep.Description(x =>
                 x.Produces(StatusCodes.Status401Unauthorized)
-                    .WithTags("rooms"));
+                    .WithTags("Rooms"));
         });
     }
 }

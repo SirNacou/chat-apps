@@ -10,6 +10,9 @@ public sealed class Room
     private readonly List<RoomMember> _members;
     public IReadOnlyCollection<RoomMember> Members => _members.AsReadOnly();
 
+    private readonly List<Message> _messages = new();
+    public IReadOnlyCollection<Message> Messages => _messages.AsReadOnly();
+
     public static Room CreateGroupRoom(string name, string creatorId)
     {
         var room = new Room(name, RoomType.Group);
