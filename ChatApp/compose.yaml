@@ -10,8 +10,6 @@
       - "8080:8080"
     env_file:
       - .env
-    volumes:
-      - dp_keys:/home/app/.aspnet/DataProtection-Keys
     depends_on:
       migration-runner:
         condition: service_completed_successfully
@@ -48,5 +46,4 @@
 
 volumes:
   pgdata:
-  dp_keys:
 

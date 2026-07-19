@@ -9,6 +9,9 @@ using System.Text.Json;
 using FastEndpoints;
 using FastEndpoints.OpenApi;
 
+using LanguageExt.Common;
+
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 
 using Scalar.AspNetCore;
@@ -17,6 +20,7 @@ using Server;
 using Server.Infrastructure.Database;
 using Server.Infrastructure.Options;
 using Server.Infrastructure.Serializers;
+using Server.Middlewares;
 using Server.Modules.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,6 +82,19 @@ app.MapGet("/weatherforecast", () =>
 
 app.UseFastEndpoints(c =>
 {
+    c.Errors.UseProblemDetails();
+
+    c.Endpoints.Configurator = ep =>
+    {
+        if (ep.ResDtoType.IsAssignableTo(typeof(Error)))
+        {
+            ep.DontAutoSendResponse();
+            ep.PostProcessors(Order.After, typeof(ResponseSender<>));
+            ep.Description(b => b.ClearDefaultProduces()
+                .Produces(200, ep.ResDtoType.GetGenericArguments()[0])
+                .ProducesProblemDetails());
+        }
+    };
     c.Endpoints.ShortNames = true;
 
     c.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;

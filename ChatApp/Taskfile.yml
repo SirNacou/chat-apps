@@ -4,7 +4,7 @@ tasks:
   dev:
     desc: "Start local development with hot-reload (dotnet watch)"
     cmds:
-      - docker compose -f compose.yaml -f compose.dev.yaml watch
+      - docker compose -f compose.yaml -f compose.dev.yaml up --watch --build
 
   build-dev:
     desc: "Force a clean, uncached build for the dev environment"

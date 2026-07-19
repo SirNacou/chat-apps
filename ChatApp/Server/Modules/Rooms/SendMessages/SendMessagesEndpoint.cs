@@ -1,10 +1,9 @@
-using System.Security.Claims;
-
 using FastEndpoints;
 
 namespace Server.Modules.Rooms.SendMessages;
 
-public sealed class SendMessagesEndpoint : Ep.Req<SendMessagesRequest>.NoRes
+public class SendMessagesEndpoint
+    : Ep.Req<SendMessagesRequest>.NoRes
 {
     public override void Configure()
     {
@@ -12,27 +11,22 @@ public sealed class SendMessagesEndpoint : Ep.Req<SendMessagesRequest>.NoRes
         Group<RoomsGroup>();
     }
 
-    public override Task HandleAsync(SendMessagesRequest req, CancellationToken ct)
+    public override async Task HandleAsync(SendMessagesRequest req, CancellationToken ct)
     {
-        User.FindFirst(ClaimTypes.NameIdentifier);
-
-        return base.HandleAsync(req, ct);
+        await Send.OkAsync(null, ct);
     }
+
 }
 
-public sealed class SendMessagesRequest
+public class SendMessagesRequest
 {
-    [RouteParam]
-    public required string RoomId { get; set; }
-
-    public required string Content { get; set; }
+    public string Content { get; set; } = null!;
 }
 
 public sealed class SendMessagesValidator : Validator<SendMessagesRequest>
 {
     public SendMessagesValidator()
     {
-        RuleFor(x => x.RoomId).NotEmpty().WithMessage("RoomId is required.");
         RuleFor(x => x.Content).NotEmpty().WithMessage("Content is required.");
     }
 }
