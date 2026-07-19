@@ -15,6 +15,7 @@ public sealed class CreateDirectMessageEndpoint(ApplicationDbContext dbContext)
     {
         Post("/dm");
         Group<RoomsGroup>();
+        Summary(s => s.ExampleRequest = new CreateDirectMessageRequest());
     }
 
     public override async Task HandleAsync(CreateDirectMessageRequest req, CancellationToken ct)

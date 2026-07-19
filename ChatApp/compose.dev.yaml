@@ -17,6 +17,8 @@ services:
         - path: ./Server
           action: sync
           target: /src/Server
+          ignore:
+            - /src/Server/Generated
 
 #    environment:
 #      ASPNETCORE_ENVIRONMENT: Development

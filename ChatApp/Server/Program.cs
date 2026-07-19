@@ -5,6 +5,7 @@ global using LanguageExt;
 global using static LanguageExt.Prelude;
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 using FastEndpoints;
 using FastEndpoints.OpenApi;
@@ -26,7 +27,44 @@ using Server.Modules.Chat;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints()
-    .OpenApiDocument();
+    .OpenApiDocument(o =>
+    {
+        o.ShortSchemaNames = true;
+        o.ConfigureOpenApi = options => options.AddOperationTransformer((operation, context, _) =>
+        {
+            var path = context.Description.RelativePath;
+
+            // Add example request for the /register endpoint
+            if (path == "register" && operation.RequestBody != null)
+            {
+                var registerExample = new { email = "admin@local.host", password = "Test1234!" };
+
+                if (operation.RequestBody.Content?.TryGetValue("application/json", out var mediaType) ?? false)
+                {
+                    mediaType.Example = JsonSerializer.SerializeToNode(registerExample);
+                }
+            }
+
+            // Add example request for the /login endpoint
+            if (path == "login" && operation.RequestBody != null)
+            {
+                var loginExample = new
+                {
+                    email = "admin@local.host",
+                    password = "Test1234!",
+                    twoFactorCode = "string",
+                    twoFactorRecoveryCode = "string"
+                };
+
+                if (operation.RequestBody.Content?.TryGetValue("application/json", out var mediaType) ?? false)
+                {
+                    mediaType.Example = JsonSerializer.SerializeToNode(loginExample);
+                }
+            }
+
+            return Task.CompletedTask;
+        });
+    });
 
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.SectionName));
 
@@ -97,7 +135,6 @@ app.UseFastEndpoints(c =>
     };
     c.Endpoints.ShortNames = true;
 
-    c.Serializer.Options.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     c.Serializer.Options.Converters.Add(TrimmingStringConverter.Instance);
     c.Serializer.Options.AddSerializerContextsFromServer();
 });

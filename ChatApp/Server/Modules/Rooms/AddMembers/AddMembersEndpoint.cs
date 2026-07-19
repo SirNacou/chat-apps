@@ -13,6 +13,10 @@ public sealed class AddMembersEndpoint(ApplicationDbContext dbContext) : Ep.Req<
     {
         Post("/{roomId}/members");
         Group<RoomsGroup>();
+        Summary(s =>
+        {
+            s.ExampleRequest = new AddMembersRequest { MemberIds = [""] };
+        });
     }
 
     public override async Task HandleAsync(AddMembersRequest req, CancellationToken ct)
@@ -37,7 +41,7 @@ public sealed class AddMembersEndpoint(ApplicationDbContext dbContext) : Ep.Req<
 
 public sealed class AddMembersRequest
 {
-    public required List<string> MemberIds { get; set; }
+    public List<string> MemberIds { get; set; } = [];
 }
 
 public sealed class AddMembersValidator : Validator<AddMembersRequest>

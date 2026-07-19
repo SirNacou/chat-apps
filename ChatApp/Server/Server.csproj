@@ -22,8 +22,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.10"/>
+    <PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
     <!--  Have to explicit use this version because of security issue and can't use version 3.x because dotnet 10 not compatible https://github.com/advisories/GHSA-v5pm-xwqc-g5wc -->
-    <PackageReference Include="Microsoft.OpenApi" Version="2.11.0"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.15" />
     <PackageReference Include="SonarAnalyzer.CSharp" Condition="'$(Configuration)' == 'Debug'" Version="10.29.0.143774">
