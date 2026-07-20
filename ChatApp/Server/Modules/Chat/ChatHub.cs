@@ -5,13 +5,55 @@ using Microsoft.EntityFrameworkCore;
 
 using Server.Domain;
 using Server.Infrastructure.Database;
+using Server.Services;
 
 namespace Server.Modules.Chat;
 
 [Authorize]
-public sealed class ChatHub : Hub<IChatClient>
+public sealed class ChatHub(IPresenceService presenceService, ApplicationDbContext dbContext) : Hub<IChatClient>
 {
-    public async Task JoinRoom(string roomId, [FromServices] ApplicationDbContext dbContext)
+    public override async Task OnConnectedAsync()
+    {
+        var userId = Context.UserIdentifier;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            // Dictionary checks if 0 -> 1 connections
+            var becameOnline = await presenceService.UserConnectedAsync(userId, Context.ConnectionId);
+            if (becameOnline)
+            {
+                await Clients.Others.UserConnected(userId);
+            }
+        }
+
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userId = Context.UserIdentifier;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            // Dictionary checks if 1 -> 0 connections
+            var wentOffline = await presenceService.UserDisconnectedAsync(userId, Context.ConnectionId);
+            if (wentOffline)
+            {
+                var timestamp = DateTimeOffset.UtcNow;
+
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user != null)
+                {
+                    user.LastSeenAt = timestamp;
+                    await dbContext.SaveChangesAsync();
+                }
+
+                await Clients.Others.UserDisconnected(userId, timestamp);
+            }
+        }
+
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task JoinRoom(string roomId)
     {
         if (!Guid.TryParse(roomId, out var parsedRoomId))
         {
@@ -48,6 +90,8 @@ public sealed class ChatHub : Hub<IChatClient>
 public interface IChatClient
 {
     Task ReceiveMessage(MessageResponseDto message);
+    Task UserConnected(string userId);
+    Task UserDisconnected(string userId, DateTimeOffset timestamp);
 }
 
 public sealed record MessageResponseDto(

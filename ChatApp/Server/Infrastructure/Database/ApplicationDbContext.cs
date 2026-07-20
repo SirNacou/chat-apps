@@ -11,7 +11,7 @@ namespace Server.Infrastructure.Database;
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
     IOptions<DatabaseOptions> databaseOptions)
-    : IdentityDbContext<IdentityUser>(options)
+    : IdentityDbContext<ChatUser>(options)
 {
     public DbSet<Room> Rooms { get; set; }
     public DbSet<RoomMember> RoomMembers { get; set; }

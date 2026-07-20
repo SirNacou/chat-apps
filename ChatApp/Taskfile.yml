@@ -1,10 +1,14 @@
 version: '3'
 
+vars:
+  PROJECT_PATH: 'Server/Server.csproj'          # Project containing your DbContext/Migrations
+  STARTUP_PATH: 'Server/Server.csproj'
+
 tasks:
   dev:
     desc: "Start local development with hot-reload (dotnet watch)"
     cmds:
-      - docker compose -f compose.yaml -f compose.dev.yaml up --watch --build
+      - docker compose -f compose.yaml -f compose.dev.yaml up --watch
 
   build-dev:
     desc: "Force a clean, uncached build for the dev environment"
@@ -25,3 +29,20 @@ tasks:
     desc: "Stop infrastructure and completely destroy stored database volumes"
     cmds:
       - docker compose -f compose.yaml down -v
+
+  migration:add:
+    desc: 'Create a new EF Core migration'
+    summary: |
+      Creates an EF Core migration with a custom name.
+      Usage:
+        task migration:add -- <MigrationName>
+        OR
+        task migration:add NAME=<MigrationName>
+    vars:
+      # Defaults to CLI_ARGS if NAME isn't explicitly passed
+      NAME: '{{.NAME | default .CLI_ARGS}}'
+    requires:
+      vars:
+        - NAME
+    cmds:
+      - dotnet ef migrations add {{.NAME}} --project {{.PROJECT_PATH}} --startup-project {{.STARTUP_PATH}}

@@ -18,11 +18,13 @@ using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
 
 using Server;
+using Server.Domain;
 using Server.Infrastructure.Database;
 using Server.Infrastructure.Options;
 using Server.Infrastructure.Serializers;
 using Server.Middlewares;
 using Server.Modules.Chat;
+using Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,8 +54,8 @@ builder.Services.AddFastEndpoints()
                 {
                     email = "admin@local.host",
                     password = "Test1234!",
-                    twoFactorCode = "string",
-                    twoFactorRecoveryCode = "string"
+                    twoFactorCode = "",
+                    twoFactorRecoveryCode = ""
                 };
 
                 if (operation.RequestBody.Content?.TryGetValue("application/json", out var mediaType) ?? false)
@@ -70,8 +72,10 @@ builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(Dat
 
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddIdentityApiEndpoints<ChatUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddSingleton<IPresenceService, MemoryPresenceService>();
 
 builder.Services.AddSignalR();
 
@@ -89,7 +93,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<ChatUser>();
 
 app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
     {
