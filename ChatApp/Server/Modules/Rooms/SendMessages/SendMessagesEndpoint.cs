@@ -1,9 +1,10 @@
+using System.Security.Claims;
+
 using FastEndpoints;
 
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
-using Server.Common.Extensions;
 using Server.Domain;
 using Server.Infrastructure.Database;
 using Server.Modules.Chat;
@@ -15,45 +16,31 @@ public sealed class SendMessagesEndpoint(ApplicationDbContext dbContext, IHubCon
 {
     public override void Configure()
     {
-        Post("/{roomId}/messages");
+        Post("/{RoomId}/messages");
         Group<RoomsGroup>();
-        Summary(s => s.ExampleRequest = new SendMessagesRequest());
     }
 
     public override async Task HandleAsync(SendMessagesRequest req, CancellationToken ct)
     {
-        var pipeline = User.GetUserId()
-            .ToEff(DomainError.Unauthorized())
-            .SelectMany(uid => CheckIsMember(uid, req.RoomId, ct), (uid, _) => uid)
-            .SelectMany(uid => SaveToDb(req.RoomId, uid, req.Content, ct), (_, message) => message)
-            .SelectMany(
-                message => Aff(async () => await hubContext.Clients.Group(req.RoomId.ToString())
-                    .ReceiveMessage(new MessageResponseDto(message)).ToUnit()),
-                (message, _) => message);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            ThrowError("Access denied.", statusCode: StatusCodes.Status401Unauthorized);
 
-        var res = await pipeline.Run();
+        var isMember = await dbContext.RoomMembers
+            .AnyAsync(rm => rm.RoomId == req.RoomId && rm.UserId == userId, ct);
 
-        await Send.CreatedAtAsync(nameof(SendMessagesEndpoint), res, cancellation: ct);
-    }
+        if (!isMember)
+            ThrowError("You do not have permission to post to this room.",
+                statusCode: StatusCodes.Status403Forbidden);
 
-    private Aff<Unit> CheckIsMember(string uid, Guid roomId, CancellationToken ct)
-    {
-        return Aff(async () => await dbContext.RoomMembers.AnyAsync(rm => rm.RoomId == roomId && rm.UserId == uid, ct))
-            .Bind(isMember => isMember
-                ? unitAff
-                : LanguageExt.Aff<Unit>.Fail(
-                    DomainError.Forbid("You do not have permission to post to this room.")));
-    }
+        var message = Message.Create(req.RoomId, userId, req.Content);
+        dbContext.Messages.Add(message);
+        await dbContext.SaveChangesAsync(ct);
 
-    private Aff<Message> SaveToDb(Guid roomId, string senderId, string content, CancellationToken ct)
-    {
-        return Aff(async () =>
-        {
-            var message = Message.Create(roomId, senderId, content);
-            dbContext.Messages.Add(message);
-            await dbContext.SaveChangesAsync(ct);
-            return message;
-        });
+        await hubContext.Clients.Group(req.RoomId.ToString())
+            .ReceiveMessage(new MessageResponseDto(message));
+
+        await Send.CreatedAtAsync(nameof(SendMessagesEndpoint), message, cancellation: ct);
     }
 }
 
@@ -62,13 +49,15 @@ public sealed class SendMessagesRequest
     [RouteParam]
     public Guid RoomId { get; set; }
 
-    public string Content { get; set; } = string.Empty;
+    public string Content { get; set; } = null!;
 }
 
 public sealed class SendMessagesValidator : Validator<SendMessagesRequest>
 {
     public SendMessagesValidator()
     {
-        RuleFor(x => x.Content).NotEmpty().WithMessage("Content is required.");
+        RuleFor(x => x.Content)
+            .NotEmpty()
+            .WithMessage("Content is required.");
     }
 }

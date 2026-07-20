@@ -30,6 +30,12 @@ tasks:
     cmds:
       - docker compose -f compose.yaml down -v
 
+  generate-api:
+    desc: "Generate API client code from OpenAPI spec (requires local server running)"
+    dir: client
+    cmds:
+      - bun run generate-api
+
   migration:add:
     desc: 'Create a new EF Core migration'
     summary: |

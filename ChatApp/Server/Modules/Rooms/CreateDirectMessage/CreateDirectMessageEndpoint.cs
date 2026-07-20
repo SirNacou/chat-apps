@@ -1,8 +1,9 @@
+using System.Security.Claims;
+
 using FastEndpoints;
 
 using Microsoft.EntityFrameworkCore;
 
-using Server.Common.Extensions;
 using Server.Domain;
 using Server.Infrastructure.Database;
 
@@ -15,56 +16,40 @@ public sealed class CreateDirectMessageEndpoint(ApplicationDbContext dbContext)
     {
         Post("/dm");
         Group<RoomsGroup>();
-        Summary(s => s.ExampleRequest = new CreateDirectMessageRequest());
+        Summary(s => s.ExampleRequest = new CreateDirectMessageRequest { RecipientId = "" });
     }
 
     public override async Task HandleAsync(CreateDirectMessageRequest req, CancellationToken ct)
     {
-        var pipeline =
-            from userId in User.GetUserId()
-                .ToEff(DomainError.Unauthorized("User is not authenticated."))
-            from _ in ValidateRecipientExists(req.RecipientId, ct)
-            from roomId in GetOrCreateDirectMessageRoom(userId, req.RecipientId, ct)
-            select roomId;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            ThrowError("User is not authenticated.", statusCode: StatusCodes.Status401Unauthorized);
 
-        var result = await pipeline.Run();
+        var recipientExists = await dbContext.Users.AnyAsync(u => u.Id == req.RecipientId, ct);
+        if (!recipientExists)
+            ThrowError("The specified recipient does not exist.",
+                statusCode: StatusCodes.Status400BadRequest);
 
-        await result.Match(
-            async roomId => await Send.OkAsync(new { RoomId = roomId }, ct),
-            error => Send.DomainErrorAsync(error, ct));
-    }
+        var existingRoomId = await dbContext.Rooms
+            .Where(r => r.Type == RoomType.DirectMessage)
+            .Where(r => r.Members.Any(m => m.UserId == userId)
+                        && r.Members.Any(m => m.UserId == req.RecipientId))
+            .Select(r => r.Id.ToString())
+            .FirstOrDefaultAsync(ct);
 
-    private Aff<Unit> ValidateRecipientExists(string recipientId, CancellationToken ct)
-    {
-        return Aff(async () => await dbContext.Users.AnyAsync(u => u.Id == recipientId, ct))
-            .Bind(exists => exists
-                ? unitAff
-                : FailAff<Unit>(DomainError.Validation(nameof(recipientId),
-                    "The specified recipient does not exist.")));
-    }
-
-    private Aff<string> GetOrCreateDirectMessageRoom(string currentUserId, string recipientId, CancellationToken ct)
-    {
-        return Aff(async () =>
+        string roomId;
+        if (existingRoomId != null)
         {
-            var existingRoomId = await dbContext.Rooms
-                .Where(r => r.Type == RoomType.DirectMessage)
-                .Where(r => r.Members.Any(m => m.UserId == currentUserId)
-                            && r.Members.Any(m => m.UserId == recipientId))
-                .Select(r => r.Id.ToString())
-                .FirstOrDefaultAsync(ct);
-
-            if (existingRoomId != null)
-            {
-                return existingRoomId;
-            }
-
-            // The Creation: Perform internal domain assembly
-            var newRoom = Room.CreateDirectMessageRoom(currentUserId, recipientId);
+            roomId = existingRoomId;
+        }
+        else
+        {
+            var newRoom = Room.CreateDirectMessageRoom(userId, req.RecipientId);
             dbContext.Rooms.Add(newRoom);
             await dbContext.SaveChangesAsync(ct);
+            roomId = newRoom.Id.ToString();
+        }
 
-            return newRoom.Id.ToString();
-        });
+        await Send.OkAsync(new { RoomId = roomId }, ct);
     }
 }

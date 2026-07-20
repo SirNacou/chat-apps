@@ -8,6 +8,12 @@
     container_name: chat_server
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     env_file:
       - .env
     depends_on:
@@ -43,6 +49,19 @@
       interval: 5s
       timeout: 5s
       retries: 5
+
+  client:
+    image: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: client
+    container_name: chat_client
+    ports:
+      - "5173:80"
+#    depends_on:
+#      server:
+#        condition: service_healthy
 
 volumes:
   pgdata:

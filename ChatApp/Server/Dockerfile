@@ -1,5 +1,7 @@
 ﻿# --- STAGE 1: BASE IMAGE FOR THE API SERVER ---
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+USER root
+RUN apt-get update && apt-get install -y curl --no-install-recommends && rm -rf /var/lib/apt/lists/*
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -15,7 +17,7 @@ COPY . .
 FROM restore AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/Server"
-RUN dotnet build "./Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Server.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 
 FROM restore AS bundle

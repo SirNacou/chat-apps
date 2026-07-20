@@ -1,14 +1,14 @@
+using System.Security.Claims;
+
 using FastEndpoints;
 
 using Microsoft.EntityFrameworkCore;
 
-using Server.Common.Extensions;
-using Server.Domain;
 using Server.Infrastructure.Database;
 
 namespace Server.Modules.Rooms.ListRooms;
 
-public sealed class ListRoomsEndpoint(ApplicationDbContext dbContext) : Ep.NoReq.Res<Fin<ListRoomResponse>>
+public sealed class ListRoomsEndpoint(ApplicationDbContext dbContext) : Ep.NoReq.Res<ListRoomResponse>
 {
     public override void Configure()
     {
@@ -16,25 +16,29 @@ public sealed class ListRoomsEndpoint(ApplicationDbContext dbContext) : Ep.NoReq
         Group<RoomsGroup>();
     }
 
-    public override async Task<Fin<ListRoomResponse>> ExecuteAsync(CancellationToken ct)
+    public override async Task<ListRoomResponse> ExecuteAsync(CancellationToken ct)
     {
-        var pipeline = User.GetUserId()
-            .ToAff(DomainError.Unauthorized())
-            .MapAsync(async uid => await dbContext.Rooms.ToListAsync(ct))
-            .Map(rooms => new ListRoomResponse
-            {
-                Rooms = rooms.Select(r =>
-                        new RoomDto { Id = r.Id.ToString(), Name = r.Name, Type = r.Type.ToString() })
-                    .ToList()
-            });
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            ThrowError("Access denied.", statusCode: StatusCodes.Status401Unauthorized);
 
-        return await pipeline.Run();
+        var rooms = await dbContext.RoomMembers
+            .Where(rm => rm.UserId == userId)
+            .Include(rm => rm.Room)
+            .ToListAsync(ct);
+
+        return new ListRoomResponse
+        {
+            Rooms = rooms.Select(r =>
+                    new RoomDto { Id = r.Room.Id.ToString(), Name = r.Room.Name, Type = r.Room.Type.ToString() })
+                .ToList()
+        };
     }
 }
 
 public sealed class ListRoomResponse
 {
-    public required List<RoomDto> Rooms { get; set; }
+    public List<RoomDto> Rooms { get; set; } = null!;
 }
 
 public sealed class RoomDto

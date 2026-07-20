@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Server/Dockerfile
-      target: build
+      target: restore
       args:
         BUILD_CONFIGURATION: Debug
     env_file:
@@ -17,10 +17,28 @@ services:
         - path: ./Server
           action: sync
           target: /src/Server
-          ignore:
-            - /src/Server/Generated
 
 #    environment:
 #      ASPNETCORE_ENVIRONMENT: Development
     # ⚡ 4. Override the entrypoint to run the .NET Watch compiler engine natively
     command: dotnet watch --non-interactive --no-launch-profile --urls http://+:8080
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: dev
+    command: ["bun", "run", "dev", "--host", "0.0.0.0", "--port", "80"]
+    develop:
+      watch:
+        - path: ./client/package.json
+          action: rebuild
+        - path: ./client/bun.lock
+          action: rebuild
+        - path: ./client
+          action: sync
+          target: /app
+          ignore:
+            - /app/node_modules
+            - /app/dist
+            - /app/.tanstack

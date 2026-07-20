@@ -41,7 +41,7 @@ public sealed class AddMembersEndpoint(ApplicationDbContext dbContext) : Ep.Req<
 
 public sealed class AddMembersRequest
 {
-    public List<string> MemberIds { get; set; } = [];
+    public required List<string> MemberIds { get; set; }
 }
 
 public sealed class AddMembersValidator : Validator<AddMembersRequest>
