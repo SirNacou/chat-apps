@@ -32,10 +32,10 @@ public sealed class CreateRoomEndpoint(ApplicationDbContext dbContext)
 
 public sealed class CreateRoomRequest
 {
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }
 
 public sealed class CreateRoomResponse
 {
-    public required string RoomId { get; set; }
+    public string RoomId { get; set; } = string.Empty;
 }

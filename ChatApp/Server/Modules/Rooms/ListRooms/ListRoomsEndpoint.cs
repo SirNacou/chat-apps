@@ -38,7 +38,7 @@ public sealed class ListRoomsEndpoint(ApplicationDbContext dbContext) : Ep.NoReq
 
 public sealed class ListRoomResponse
 {
-    public List<RoomDto> Rooms { get; set; } = null!;
+    public List<RoomDto> Rooms { get; set; } = [];
 }
 
 public sealed class RoomDto

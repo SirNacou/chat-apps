@@ -9,8 +9,7 @@ public sealed class RoomsGroup : Group
         Configure("rooms", ep =>
         {
             ep.Description(x =>
-                x.Produces(StatusCodes.Status401Unauthorized)
-                    .WithTags("Rooms"));
+                x.Produces(StatusCodes.Status401Unauthorized));
         });
     }
 }

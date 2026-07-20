@@ -17,18 +17,29 @@ services:
         - path: ./Server
           action: sync
           target: /src/Server
-
-#    environment:
-#      ASPNETCORE_ENVIRONMENT: Development
     # ⚡ 4. Override the entrypoint to run the .NET Watch compiler engine natively
-    command: dotnet watch --non-interactive --no-launch-profile --urls http://+:8080
+    command: dotnet watch --project /src/Server --non-interactive --no-launch-profile --urls http://+:8080
+
+  migration-runner:
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+      target: migration
+      args:
+        BUILD_CONFIGURATION: Debug
+    env_file:
+      - .env
+    develop:
+      watch:
+        - path: ./Server/Migrations
+          action: rebuild
 
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
       target: dev
-    command: ["bun", "run", "dev", "--host", "0.0.0.0", "--port", "80"]
+    command: [ "bun", "run", "dev", "--host", "0.0.0.0", "--port", "80" ]
     develop:
       watch:
         - path: ./client/package.json

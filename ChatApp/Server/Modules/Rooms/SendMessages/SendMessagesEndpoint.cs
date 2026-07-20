@@ -49,15 +49,5 @@ public sealed class SendMessagesRequest
     [RouteParam]
     public Guid RoomId { get; set; }
 
-    public string Content { get; set; } = null!;
-}
-
-public sealed class SendMessagesValidator : Validator<SendMessagesRequest>
-{
-    public SendMessagesValidator()
-    {
-        RuleFor(x => x.Content)
-            .NotEmpty()
-            .WithMessage("Content is required.");
-    }
+    public string Content { get; set; } = string.Empty;
 }

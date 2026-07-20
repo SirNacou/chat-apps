@@ -9,8 +9,7 @@ public sealed class UsersGroup : Group
         Configure("users", ep =>
         {
             ep.Description(x =>
-                x.Produces(StatusCodes.Status401Unauthorized)
-                    .WithTags("Users"));
+                x.Produces(StatusCodes.Status401Unauthorized));
         });
     }
 }

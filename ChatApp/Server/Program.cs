@@ -6,6 +6,7 @@ using FastEndpoints;
 using FastEndpoints.OpenApi;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi;
 
 using Scalar.AspNetCore;
 
@@ -57,12 +58,6 @@ builder.Services.AddFastEndpoints(DiscoveredTypes.All)
 
                 return Task.CompletedTask;
             });
-
-            options.AddSchemaTransformer((schema, _, _) =>
-            {
-                schema.Const = null;
-                return Task.CompletedTask;
-            });
         };
     });
 
@@ -98,25 +93,23 @@ app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
     return Results.Ok();
 }).RequireAuthorization();
 
+app.MapHub<ChatHub>("/chathub");
+
+app.UseFastEndpoints(c =>
+{
+    c.Errors.UseProblemDetails();
+    c.Endpoints.ShortNames = true;
+    c.Endpoints.NameGenerator = ctx => ctx.EndpointType.Name.TrimEnd("Endpoint").ToString();
+    c.Serializer.Options.Converters.Add(TrimmingStringConverter.Instance);
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference("/docs", options =>
     {
-        options.AddDocument("v1", "My API", "/openapi/{documentName}.json");
+        options.AddDocument("v1", "My API");
     });
 }
-
-app.UseFastEndpoints(c =>
-{
-    c.Binding.ReflectionCache.AddFromServer();
-    c.Errors.UseProblemDetails();
-    c.Endpoints.ShortNames = true;
-    c.Endpoints.NameGenerator = ctx => ctx.EndpointType.Name.TrimEnd("Endpoint").ToString();
-    c.Serializer.Options.Converters.Add(TrimmingStringConverter.Instance);
-    c.Serializer.Options.AddSerializerContextsFromServer();
-});
-
-app.MapHub<ChatHub>("/chathub");
 
 await app.RunAsync();
