@@ -4,14 +4,14 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
-export type MicrosoftAspNetCoreHttpHttpValidationProblemDetails = MicrosoftAspNetCoreMvcProblemDetails & {
+export type HttpValidationProblemDetails = ProblemDetails & {
     errors?: {
         [key: string]: Array<string>;
     };
     [key: string]: unknown;
 };
 
-export type MicrosoftAspNetCoreMvcProblemDetails = {
+export type ProblemDetails = {
     type?: string | null;
     title?: string | null;
     status?: number | null;
@@ -20,44 +20,44 @@ export type MicrosoftAspNetCoreMvcProblemDetails = {
     [key: string]: unknown;
 };
 
-export type MicrosoftAspNetCoreIdentityDataRegisterRequest = {
+export type RegisterRequest = {
     email: string;
     password: string;
 };
 
-export type MicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse = {
+export type AccessTokenResponse = {
     tokenType?: string;
     accessToken: string;
     expiresIn: number;
     refreshToken: string;
 };
 
-export type MicrosoftAspNetCoreIdentityDataLoginRequest = {
+export type LoginRequest = {
     email: string;
     password: string;
     twoFactorCode?: string | null;
     twoFactorRecoveryCode?: string | null;
 };
 
-export type MicrosoftAspNetCoreIdentityDataRefreshRequest = {
+export type RefreshRequest = {
     refreshToken: string;
 };
 
-export type MicrosoftAspNetCoreIdentityDataResendConfirmationEmailRequest = {
+export type ResendConfirmationEmailRequest = {
     email: string;
 };
 
-export type MicrosoftAspNetCoreIdentityDataForgotPasswordRequest = {
+export type ForgotPasswordRequest = {
     email: string;
 };
 
-export type MicrosoftAspNetCoreIdentityDataResetPasswordRequest = {
+export type ResetPasswordRequest = {
     email: string;
     resetCode: string;
     newPassword: string;
 };
 
-export type MicrosoftAspNetCoreIdentityDataTwoFactorResponse = {
+export type TwoFactorResponse = {
     sharedKey: string;
     recoveryCodesLeft: number;
     recoveryCodes?: Array<string> | null;
@@ -65,7 +65,7 @@ export type MicrosoftAspNetCoreIdentityDataTwoFactorResponse = {
     isMachineRemembered: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityDataTwoFactorRequest = {
+export type TwoFactorRequest = {
     enable?: boolean | null;
     twoFactorCode?: string | null;
     resetSharedKey?: boolean;
@@ -73,39 +73,39 @@ export type MicrosoftAspNetCoreIdentityDataTwoFactorRequest = {
     forgetMachine?: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityDataInfoResponse = {
+export type InfoResponse = {
     email: string;
     isEmailConfirmed: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityDataInfoRequest = {
+export type InfoRequest = {
     newEmail?: string | null;
     newPassword?: string | null;
     oldPassword?: string | null;
 };
 
-export type MicrosoftAspNetCoreIdentitySignInManagerOfIdentityUser = {
-    logger?: MicrosoftExtensionsLoggingILogger;
-    userManager?: MicrosoftAspNetCoreIdentityUserManagerOfIdentityUser;
-    claimsFactory?: MicrosoftAspNetCoreIdentityIuserClaimsPrincipalFactoryOfIdentityUser;
-    options?: MicrosoftAspNetCoreIdentityIdentityOptions;
+export type SignInManagerOfIdentityUser = {
+    logger?: ILogger;
+    userManager?: UserManagerOfIdentityUser;
+    claimsFactory?: IuserClaimsPrincipalFactoryOfIdentityUser;
+    options?: IdentityOptions;
     authenticationScheme?: string;
-    context?: MicrosoftAspNetCoreHttpHttpContext;
+    context?: HttpContext;
 };
 
-export type MicrosoftExtensionsLoggingILogger = {
+export type ILogger = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityUserManagerOfIdentityUser = {
-    logger?: MicrosoftExtensionsLoggingILogger;
-    passwordHasher?: MicrosoftAspNetCoreIdentityIPasswordHasherOfIdentityUser;
-    userValidators?: Array<MicrosoftAspNetCoreIdentityIuserValidatorOfIdentityUser>;
-    passwordValidators?: Array<MicrosoftAspNetCoreIdentityIPasswordValidatorOfIdentityUser>;
-    keyNormalizer?: MicrosoftAspNetCoreIdentityILookupNormalizer;
-    errorDescriber?: MicrosoftAspNetCoreIdentityIdentityErrorDescriber;
-    options?: MicrosoftAspNetCoreIdentityIdentityOptions;
-    serviceProvider?: SystemIServiceProvider;
+export type UserManagerOfIdentityUser = {
+    logger?: ILogger;
+    passwordHasher?: IPasswordHasherOfIdentityUser;
+    userValidators?: Array<IuserValidatorOfIdentityUser>;
+    passwordValidators?: Array<IPasswordValidatorOfIdentityUser>;
+    keyNormalizer?: ILookupNormalizer;
+    errorDescriber?: IdentityErrorDescriber;
+    options?: IdentityOptions;
+    serviceProvider?: IServiceProvider;
     supportsUserAuthenticationTokens?: boolean;
     supportsUserAuthenticatorKey?: boolean;
     supportsUserTwoFactorRecoveryCodes?: boolean;
@@ -120,40 +120,40 @@ export type MicrosoftAspNetCoreIdentityUserManagerOfIdentityUser = {
     supportsUserLockout?: boolean;
     supportsQueryableUsers?: boolean;
     supportsUserPasskey?: boolean;
-    users?: Array<MicrosoftAspNetCoreIdentityIdentityUser>;
+    users?: Array<IdentityUser>;
 };
 
-export type MicrosoftAspNetCoreIdentityIPasswordHasherOfIdentityUser = {
+export type IPasswordHasherOfIdentityUser = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityIuserValidatorOfIdentityUser = {
+export type IuserValidatorOfIdentityUser = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityIPasswordValidatorOfIdentityUser = {
+export type IPasswordValidatorOfIdentityUser = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityILookupNormalizer = {
+export type ILookupNormalizer = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityIdentityErrorDescriber = {
+export type IdentityErrorDescriber = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityIdentityOptions = {
-    claimsIdentity?: MicrosoftAspNetCoreIdentityClaimsIdentityOptions;
-    user?: MicrosoftAspNetCoreIdentityUserOptions;
-    password?: MicrosoftAspNetCoreIdentityPasswordOptions;
-    lockout?: MicrosoftAspNetCoreIdentityLockoutOptions;
-    signIn?: MicrosoftAspNetCoreIdentitySignInOptions;
-    tokens?: MicrosoftAspNetCoreIdentityTokenOptions;
-    stores?: MicrosoftAspNetCoreIdentityStoreOptions;
+export type IdentityOptions = {
+    claimsIdentity?: ClaimsIdentityOptions;
+    user?: UserOptions;
+    password?: PasswordOptions;
+    lockout?: LockoutOptions;
+    signIn?: SignInOptions;
+    tokens?: TokenOptions;
+    stores?: StoreOptions;
 };
 
-export type MicrosoftAspNetCoreIdentityClaimsIdentityOptions = {
+export type ClaimsIdentityOptions = {
     roleClaimType?: string;
     userNameClaimType?: string;
     userIdClaimType?: string;
@@ -161,12 +161,12 @@ export type MicrosoftAspNetCoreIdentityClaimsIdentityOptions = {
     securityStampClaimType?: string;
 };
 
-export type MicrosoftAspNetCoreIdentityUserOptions = {
+export type UserOptions = {
     allowedUserNameCharacters?: string;
     requireUniqueEmail?: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityPasswordOptions = {
+export type PasswordOptions = {
     requiredLength?: number;
     requiredUniqueChars?: number;
     requireNonAlphanumeric?: boolean;
@@ -175,21 +175,21 @@ export type MicrosoftAspNetCoreIdentityPasswordOptions = {
     requireDigit?: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityLockoutOptions = {
+export type LockoutOptions = {
     allowedForNewUsers?: boolean;
     maxFailedAccessAttempts?: number;
     defaultLockoutTimeSpan?: string;
 };
 
-export type MicrosoftAspNetCoreIdentitySignInOptions = {
+export type SignInOptions = {
     requireConfirmedEmail?: boolean;
     requireConfirmedPhoneNumber?: boolean;
     requireConfirmedAccount?: boolean;
 };
 
-export type MicrosoftAspNetCoreIdentityTokenOptions = {
+export type TokenOptions = {
     providerMap?: {
-        [key: string]: MicrosoftAspNetCoreIdentityTokenProviderDescriptor;
+        [key: string]: TokenProviderDescriptor;
     };
     emailConfirmationTokenProvider?: string;
     passwordResetTokenProvider?: string;
@@ -199,24 +199,24 @@ export type MicrosoftAspNetCoreIdentityTokenOptions = {
     authenticatorIssuer?: string;
 };
 
-export type MicrosoftAspNetCoreIdentityTokenProviderDescriptor = {
+export type TokenProviderDescriptor = {
     providerType?: string;
     providerInstance?: unknown;
 };
 
-export type MicrosoftAspNetCoreIdentityStoreOptions = {
+export type StoreOptions = {
     maxLengthForKeys?: number;
     protectPersonalData?: boolean;
     schemaVersion?: string;
 };
 
-export type SystemIServiceProvider = {
+export type IServiceProvider = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreIdentityIdentityUser = MicrosoftAspNetCoreIdentityIdentityUserOfString & {};
+export type IdentityUser = IdentityUserOfString & {};
 
-export type MicrosoftAspNetCoreIdentityIdentityUserOfString = {
+export type IdentityUserOfString = {
     id?: string | null;
     userName?: string | null;
     normalizedUserName?: string | null;
@@ -234,83 +234,83 @@ export type MicrosoftAspNetCoreIdentityIdentityUserOfString = {
     accessFailedCount?: number;
 };
 
-export type MicrosoftAspNetCoreIdentityIuserClaimsPrincipalFactoryOfIdentityUser = {
+export type IuserClaimsPrincipalFactoryOfIdentityUser = {
     [key: string]: never;
 };
 
-export type MicrosoftAspNetCoreHttpHttpContext = {
+export type HttpContext = {
     [key: string]: never;
 };
 
-export type ServerModulesRoomsAddMembersAddMembersRequest = {
+export type AddMembersRequest = {
     memberIds: Array<string>;
 };
 
-export type FastEndpointsProblemDetails = {
+export type ProblemDetails2 = {
     type?: string;
     title?: string;
     status?: number;
     instance?: string;
     traceId?: string;
     detail?: string | null;
-    errors?: Array<FastEndpointsProblemDetailsError>;
+    errors?: Array<ProblemDetailsError>;
 };
 
-export type FastEndpointsProblemDetailsError = {
+export type ProblemDetailsError = {
     name?: string;
     reason?: string;
     code?: string | null;
     severity?: string | null;
 };
 
-export type ServerModulesRoomsCreateDirectMessageCreateDirectMessageRequest = {
-    recipientId: string;
+export type CreateDirectMessageRequest = {
+    recipientId?: string;
 };
 
-export type ServerModulesRoomsCreateRoomCreateRoomResponse = {
-    roomId: string;
+export type CreateRoomResponse = {
+    roomId?: string;
 };
 
-export type ServerModulesRoomsCreateRoomCreateRoomRequest = {
-    name: string;
+export type CreateRoomRequest = {
+    name?: string;
 };
 
-export type ServerModulesRoomsGetMessagesGetMessagesResponse = {
-    messages?: Array<ServerModulesRoomsGetMessagesGetMessagesResponseMessageDto>;
+export type GetMessagesResponse = {
+    messages?: Array<GetMessagesResponseMessageDto>;
     nextCursor?: string | null;
     hasNextPage?: boolean;
 };
 
-export type ServerModulesRoomsGetMessagesGetMessagesResponseMessageDto = {
+export type GetMessagesResponseMessageDto = {
     id?: string;
     content?: string;
     senderId?: string;
     timestamp?: string;
 };
 
-export type ServerModulesRoomsGetMessagesGetMessagesRequest = {
+export type GetMessagesRequest = {
     [key: string]: never;
 };
 
-export type ServerModulesRoomsListRoomsListRoomResponse = {
-    rooms?: Array<ServerModulesRoomsListRoomsRoomDto>;
+export type ListRoomResponse = {
+    rooms?: Array<RoomDto>;
 };
 
-export type ServerModulesRoomsListRoomsRoomDto = {
+export type RoomDto = {
     id: string;
     name: string;
     type: string;
 };
 
-export type ServerModulesRoomsSendMessagesSendMessagesRequest = {
-    content: string;
+export type SendMessagesRequest = {
+    content?: string;
 };
 
-export type ServerModulesUsersListUsersListUsersResponse = {
-    data?: Array<ServerModulesUsersListUsersUserResponseDto>;
+export type ListUsersResponse = {
+    data?: Array<UserResponseDto>;
 };
 
-export type ServerModulesUsersListUsersUserResponseDto = {
+export type UserResponseDto = {
     id?: string;
     username?: string;
     lastSeenAt?: string;
@@ -318,14 +318,14 @@ export type ServerModulesUsersListUsersUserResponseDto = {
 };
 
 export type PostRegisterData = {
-    body: MicrosoftAspNetCoreIdentityDataRegisterRequest;
+    body: RegisterRequest;
     path?: never;
     query?: never;
     url: '/register';
 };
 
 export type PostRegisterErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
 };
 
 export type PostRegisterError = PostRegisterErrors[keyof PostRegisterErrors];
@@ -335,7 +335,7 @@ export type PostRegisterResponses = {
 };
 
 export type PostLoginData = {
-    body: MicrosoftAspNetCoreIdentityDataLoginRequest;
+    body: LoginRequest;
     path?: never;
     query?: {
         useCookies?: boolean | null;
@@ -345,20 +345,20 @@ export type PostLoginData = {
 };
 
 export type PostLoginResponses = {
-    200: MicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse;
+    200: AccessTokenResponse;
 };
 
 export type PostLoginResponse = PostLoginResponses[keyof PostLoginResponses];
 
 export type PostRefreshData = {
-    body: MicrosoftAspNetCoreIdentityDataRefreshRequest;
+    body: RefreshRequest;
     path?: never;
     query?: never;
     url: '/refresh';
 };
 
 export type PostRefreshResponses = {
-    200: MicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse;
+    200: AccessTokenResponse;
 };
 
 export type PostRefreshResponse = PostRefreshResponses[keyof PostRefreshResponses];
@@ -379,7 +379,7 @@ export type GetConfirmEmailResponses = {
 };
 
 export type PostResendConfirmationEmailData = {
-    body: MicrosoftAspNetCoreIdentityDataResendConfirmationEmailRequest;
+    body: ResendConfirmationEmailRequest;
     path?: never;
     query?: never;
     url: '/resendConfirmationEmail';
@@ -390,14 +390,14 @@ export type PostResendConfirmationEmailResponses = {
 };
 
 export type PostForgotPasswordData = {
-    body: MicrosoftAspNetCoreIdentityDataForgotPasswordRequest;
+    body: ForgotPasswordRequest;
     path?: never;
     query?: never;
     url: '/forgotPassword';
 };
 
 export type PostForgotPasswordErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
 };
 
 export type PostForgotPasswordError = PostForgotPasswordErrors[keyof PostForgotPasswordErrors];
@@ -407,14 +407,14 @@ export type PostForgotPasswordResponses = {
 };
 
 export type PostResetPasswordData = {
-    body: MicrosoftAspNetCoreIdentityDataResetPasswordRequest;
+    body: ResetPasswordRequest;
     path?: never;
     query?: never;
     url: '/resetPassword';
 };
 
 export type PostResetPasswordErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
 };
 
 export type PostResetPasswordError = PostResetPasswordErrors[keyof PostResetPasswordErrors];
@@ -424,21 +424,21 @@ export type PostResetPasswordResponses = {
 };
 
 export type PostManage2FaData = {
-    body: MicrosoftAspNetCoreIdentityDataTwoFactorRequest;
+    body: TwoFactorRequest;
     path?: never;
     query?: never;
     url: '/manage/2fa';
 };
 
 export type PostManage2FaErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
     404: unknown;
 };
 
 export type PostManage2FaError = PostManage2FaErrors[keyof PostManage2FaErrors];
 
 export type PostManage2FaResponses = {
-    200: MicrosoftAspNetCoreIdentityDataTwoFactorResponse;
+    200: TwoFactorResponse;
 };
 
 export type PostManage2FaResponse = PostManage2FaResponses[keyof PostManage2FaResponses];
@@ -451,40 +451,40 @@ export type GetManageInfoData = {
 };
 
 export type GetManageInfoErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
     404: unknown;
 };
 
 export type GetManageInfoError = GetManageInfoErrors[keyof GetManageInfoErrors];
 
 export type GetManageInfoResponses = {
-    200: MicrosoftAspNetCoreIdentityDataInfoResponse;
+    200: InfoResponse;
 };
 
 export type GetManageInfoResponse = GetManageInfoResponses[keyof GetManageInfoResponses];
 
 export type PostManageInfoData = {
-    body: MicrosoftAspNetCoreIdentityDataInfoRequest;
+    body: InfoRequest;
     path?: never;
     query?: never;
     url: '/manage/info';
 };
 
 export type PostManageInfoErrors = {
-    400: MicrosoftAspNetCoreHttpHttpValidationProblemDetails;
+    400: HttpValidationProblemDetails;
     404: unknown;
 };
 
 export type PostManageInfoError = PostManageInfoErrors[keyof PostManageInfoErrors];
 
 export type PostManageInfoResponses = {
-    200: MicrosoftAspNetCoreIdentityDataInfoResponse;
+    200: InfoResponse;
 };
 
 export type PostManageInfoResponse = PostManageInfoResponses[keyof PostManageInfoResponses];
 
 export type PostLogoutData = {
-    body: MicrosoftAspNetCoreIdentitySignInManagerOfIdentityUser;
+    body: SignInManagerOfIdentityUser;
     path?: never;
     query?: never;
     url: '/logout';
@@ -495,7 +495,7 @@ export type PostLogoutResponses = {
 };
 
 export type AddMembersData = {
-    body: ServerModulesRoomsAddMembersAddMembersRequest;
+    body: AddMembersRequest;
     path: {
         roomId: string;
     };
@@ -507,7 +507,7 @@ export type AddMembersErrors = {
     /**
      * Bad Request
      */
-    400: FastEndpointsProblemDetails;
+    400: ProblemDetails2;
     /**
      * Unauthorized
      */
@@ -526,7 +526,7 @@ export type AddMembersResponses = {
 export type AddMembersResponse = AddMembersResponses[keyof AddMembersResponses];
 
 export type CreateDirectMessageData = {
-    body: ServerModulesRoomsCreateDirectMessageCreateDirectMessageRequest;
+    body: CreateDirectMessageRequest;
     path?: never;
     query?: never;
     url: '/rooms/dm';
@@ -534,16 +534,10 @@ export type CreateDirectMessageData = {
 
 export type CreateDirectMessageErrors = {
     /**
-     * Bad Request
-     */
-    400: FastEndpointsProblemDetails;
-    /**
      * Unauthorized
      */
     401: unknown;
 };
-
-export type CreateDirectMessageError = CreateDirectMessageErrors[keyof CreateDirectMessageErrors];
 
 export type CreateDirectMessageResponses = {
     /**
@@ -572,13 +566,13 @@ export type ListRoomsResponses = {
     /**
      * Success
      */
-    200: ServerModulesRoomsListRoomsListRoomResponse;
+    200: ListRoomResponse;
 };
 
 export type ListRoomsResponse = ListRoomsResponses[keyof ListRoomsResponses];
 
 export type CreateRoomData = {
-    body: ServerModulesRoomsCreateRoomCreateRoomRequest;
+    body: CreateRoomRequest;
     path?: never;
     query?: never;
     url: '/rooms';
@@ -595,10 +589,10 @@ export type CreateRoomResponses = {
     /**
      * Success
      */
-    200: ServerModulesRoomsCreateRoomCreateRoomResponse;
+    200: CreateRoomResponse;
 };
 
-export type CreateRoomResponse = CreateRoomResponses[keyof CreateRoomResponses];
+export type CreateRoomResponse2 = CreateRoomResponses[keyof CreateRoomResponses];
 
 export type GetMessagesData = {
     body?: never;
@@ -623,13 +617,13 @@ export type GetMessagesResponses = {
     /**
      * Success
      */
-    200: ServerModulesRoomsGetMessagesGetMessagesResponse;
+    200: GetMessagesResponse;
 };
 
-export type GetMessagesResponse = GetMessagesResponses[keyof GetMessagesResponses];
+export type GetMessagesResponse2 = GetMessagesResponses[keyof GetMessagesResponses];
 
 export type SendMessagesData = {
-    body: ServerModulesRoomsSendMessagesSendMessagesRequest;
+    body: SendMessagesRequest;
     path: {
         roomId: string;
     };
@@ -639,16 +633,10 @@ export type SendMessagesData = {
 
 export type SendMessagesErrors = {
     /**
-     * Bad Request
-     */
-    400: FastEndpointsProblemDetails;
-    /**
      * Unauthorized
      */
     401: unknown;
 };
-
-export type SendMessagesError = SendMessagesErrors[keyof SendMessagesErrors];
 
 export type SendMessagesResponses = {
     /**
@@ -677,7 +665,7 @@ export type ListUsersResponses = {
     /**
      * Success
      */
-    200: ServerModulesUsersListUsersListUsersResponse;
+    200: ListUsersResponse;
 };
 
-export type ListUsersResponse = ListUsersResponses[keyof ListUsersResponses];
+export type ListUsersResponse2 = ListUsersResponses[keyof ListUsersResponses];

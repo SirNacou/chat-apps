@@ -1,9 +1,7 @@
 global using FluentValidation;
 
-using System.Text.Json;
-
 using FastEndpoints;
-using FastEndpoints.OpenApi;
+using FastEndpoints.Swagger;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
@@ -21,43 +19,13 @@ using Server.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints(DiscoveredTypes.All)
-    .OpenApiDocument(o =>
+    .SwaggerDocument(o =>
     {
         o.ShortSchemaNames = true;
-        o.ConfigureOpenApi = options =>
+        o.DocumentSettings = s =>
         {
-            options.AddOperationTransformer((operation, context, _) =>
-            {
-                var path = context.Description.RelativePath;
-
-                if (path == "register" && operation.RequestBody != null)
-                {
-                    var registerExample = new { email = "admin@local.host", password = "Test1234!" };
-
-                    if (operation.RequestBody.Content?.TryGetValue("application/json", out var mediaType) ?? false)
-                    {
-                        mediaType.Example = JsonSerializer.SerializeToNode(registerExample);
-                    }
-                }
-
-                if (path == "login" && operation.RequestBody != null)
-                {
-                    var loginExample = new
-                    {
-                        email = "admin@local.host",
-                        password = "Test1234!",
-                        twoFactorCode = "",
-                        twoFactorRecoveryCode = ""
-                    };
-
-                    if (operation.RequestBody.Content?.TryGetValue("application/json", out var mediaType) ?? false)
-                    {
-                        mediaType.Example = JsonSerializer.SerializeToNode(loginExample);
-                    }
-                }
-
-                return Task.CompletedTask;
-            });
+            s.Title = "My API";
+            s.Version = "v1";
         };
     });
 
@@ -101,11 +69,12 @@ app.UseFastEndpoints(c =>
     c.Endpoints.ShortNames = true;
     c.Endpoints.NameGenerator = ctx => ctx.EndpointType.Name.TrimEnd("Endpoint").ToString();
     c.Serializer.Options.Converters.Add(TrimmingStringConverter.Instance);
+    c.Serializer.Options.AddSerializerContextsFromServer();
 });
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");
     app.MapScalarApiReference("/docs", options =>
     {
         options.AddDocument("v1", "My API");

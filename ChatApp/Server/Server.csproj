@@ -15,6 +15,7 @@
     <PackageReference Include="FastEndpoints.Generator" Version="8.2.0"/>
     <PackageReference Include="FastEndpoints.HealthChecks" Version="8.2.0" />
     <PackageReference Include="FastEndpoints.OpenApi" Version="8.2.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="8.2.0" />
 
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10"/>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>

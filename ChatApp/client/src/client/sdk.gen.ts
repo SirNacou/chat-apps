@@ -5,7 +5,7 @@ import * as z from 'zod';
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
 import type { AddMembersData, AddMembersErrors, AddMembersResponses, CreateDirectMessageData, CreateDirectMessageErrors, CreateDirectMessageResponses, CreateRoomData, CreateRoomErrors, CreateRoomResponses, GetConfirmEmailData, GetConfirmEmailResponses, GetManageInfoData, GetManageInfoErrors, GetManageInfoResponses, GetMessagesData, GetMessagesErrors, GetMessagesResponses, ListRoomsData, ListRoomsErrors, ListRoomsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, PostForgotPasswordData, PostForgotPasswordErrors, PostForgotPasswordResponses, PostLoginData, PostLoginResponses, PostLogoutData, PostLogoutResponses, PostManage2FaData, PostManage2FaErrors, PostManage2FaResponses, PostManageInfoData, PostManageInfoErrors, PostManageInfoResponses, PostRefreshData, PostRefreshResponses, PostRegisterData, PostRegisterErrors, PostRegisterResponses, PostResendConfirmationEmailData, PostResendConfirmationEmailResponses, PostResetPasswordData, PostResetPasswordErrors, PostResetPasswordResponses, SendMessagesData, SendMessagesErrors, SendMessagesResponses } from './types.gen';
-import { zAddMembersBody, zAddMembersPath, zAddMembersResponse, zCreateDirectMessageBody, zCreateDirectMessageResponse, zCreateRoomBody, zCreateRoomResponse, zGetConfirmEmailQuery, zGetManageInfoResponse, zGetMessagesPath, zGetMessagesQuery, zGetMessagesResponse, zListRoomsResponse, zListUsersResponse, zPostForgotPasswordBody, zPostLoginBody, zPostLoginQuery, zPostLoginResponse, zPostLogoutBody, zPostManage2FaBody, zPostManage2FaResponse, zPostManageInfoBody, zPostManageInfoResponse, zPostRefreshBody, zPostRefreshResponse, zPostRegisterBody, zPostResendConfirmationEmailBody, zPostResetPasswordBody, zSendMessagesBody, zSendMessagesPath, zSendMessagesResponse } from './zod.gen';
+import { zAddMembersBody, zAddMembersPath, zAddMembersResponse, zCreateDirectMessageBody, zCreateDirectMessageResponse, zCreateRoomBody, zCreateRoomResponse2, zGetConfirmEmailQuery, zGetManageInfoResponse, zGetMessagesPath, zGetMessagesQuery, zGetMessagesResponse2, zListRoomsResponse, zListUsersResponse2, zPostForgotPasswordBody, zPostLoginBody, zPostLoginQuery, zPostLoginResponse, zPostLogoutBody, zPostManage2FaBody, zPostManage2FaResponse, zPostManageInfoBody, zPostManageInfoResponse, zPostRefreshBody, zPostRefreshResponse, zPostRegisterBody, zPostResendConfirmationEmailBody, zPostResetPasswordBody, zSendMessagesBody, zSendMessagesPath, zSendMessagesResponse } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -226,7 +226,7 @@ export const createRoom = <ThrowOnError extends boolean = false>(options: Option
         path: z.never().optional(),
         query: z.never().optional()
     }).parseAsync(data),
-    responseValidator: async (data) => await zCreateRoomResponse.parseAsync(data),
+    responseValidator: async (data) => await zCreateRoomResponse2.parseAsync(data),
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/rooms',
     ...options,
@@ -242,7 +242,7 @@ export const getMessages = <ThrowOnError extends boolean = false>(options: Optio
         path: zGetMessagesPath,
         query: zGetMessagesQuery
     }).parseAsync(data),
-    responseValidator: async (data) => await zGetMessagesResponse.parseAsync(data),
+    responseValidator: async (data) => await zGetMessagesResponse2.parseAsync(data),
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/rooms/{roomId}/messages',
     ...options
@@ -270,7 +270,7 @@ export const listUsers = <ThrowOnError extends boolean = false>(options?: Option
         path: z.never().optional(),
         query: z.never().optional()
     }).parseAsync(data),
-    responseValidator: async (data) => await zListUsersResponse.parseAsync(data),
+    responseValidator: async (data) => await zListUsersResponse2.parseAsync(data),
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/users',
     ...options

@@ -16,7 +16,7 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
             .WithMany(r => r.Messages)
             .HasForeignKey(m => m.RoomId)
             .OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<IdentityUser>()
+        builder.HasOne<ChatUser>()
             .WithMany()
             .HasForeignKey(m => m.SenderId)
             .OnDelete(DeleteBehavior.Restrict);

@@ -2,7 +2,7 @@
 
 import * as z from 'zod';
 
-export const zMicrosoftAspNetCoreMvcProblemDetails = z.object({
+export const zProblemDetails = z.object({
     type: z.string().nullish(),
     title: z.string().nullish(),
     status: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).nullish(),
@@ -10,48 +10,48 @@ export const zMicrosoftAspNetCoreMvcProblemDetails = z.object({
     instance: z.string().nullish()
 });
 
-export const zMicrosoftAspNetCoreHttpHttpValidationProblemDetails = zMicrosoftAspNetCoreMvcProblemDetails.and(z.object({
+export const zHttpValidationProblemDetails = zProblemDetails.and(z.object({
     errors: z.record(z.string(), z.array(z.string())).optional()
 }));
 
-export const zMicrosoftAspNetCoreIdentityDataRegisterRequest = z.object({
+export const zRegisterRequest = z.object({
     email: z.string(),
     password: z.string()
 });
 
-export const zMicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse = z.object({
+export const zAccessTokenResponse = z.object({
     tokenType: z.string().optional(),
     accessToken: z.string(),
     expiresIn: z.coerce.bigint().min(BigInt('-9223372036854775808'), { error: 'Invalid value: Expected int64 to be >= -9223372036854775808' }).max(BigInt('9223372036854775807'), { error: 'Invalid value: Expected int64 to be <= 9223372036854775807' }),
     refreshToken: z.string()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataLoginRequest = z.object({
+export const zLoginRequest = z.object({
     email: z.string(),
     password: z.string(),
     twoFactorCode: z.string().nullish(),
     twoFactorRecoveryCode: z.string().nullish()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataRefreshRequest = z.object({
+export const zRefreshRequest = z.object({
     refreshToken: z.string()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataResendConfirmationEmailRequest = z.object({
+export const zResendConfirmationEmailRequest = z.object({
     email: z.string()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataForgotPasswordRequest = z.object({
+export const zForgotPasswordRequest = z.object({
     email: z.string()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataResetPasswordRequest = z.object({
+export const zResetPasswordRequest = z.object({
     email: z.string(),
     resetCode: z.string(),
     newPassword: z.string()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataTwoFactorResponse = z.object({
+export const zTwoFactorResponse = z.object({
     sharedKey: z.string(),
     recoveryCodesLeft: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }),
     recoveryCodes: z.array(z.string()).nullish(),
@@ -59,7 +59,7 @@ export const zMicrosoftAspNetCoreIdentityDataTwoFactorResponse = z.object({
     isMachineRemembered: z.boolean()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataTwoFactorRequest = z.object({
+export const zTwoFactorRequest = z.object({
     enable: z.boolean().nullish(),
     twoFactorCode: z.string().nullish(),
     resetSharedKey: z.boolean().optional(),
@@ -67,30 +67,30 @@ export const zMicrosoftAspNetCoreIdentityDataTwoFactorRequest = z.object({
     forgetMachine: z.boolean().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataInfoResponse = z.object({
+export const zInfoResponse = z.object({
     email: z.string(),
     isEmailConfirmed: z.boolean()
 });
 
-export const zMicrosoftAspNetCoreIdentityDataInfoRequest = z.object({
+export const zInfoRequest = z.object({
     newEmail: z.string().nullish(),
     newPassword: z.string().nullish(),
     oldPassword: z.string().nullish()
 });
 
-export const zMicrosoftExtensionsLoggingILogger = z.record(z.string(), z.never());
+export const zILogger = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityIPasswordHasherOfIdentityUser = z.record(z.string(), z.never());
+export const zIPasswordHasherOfIdentityUser = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityIuserValidatorOfIdentityUser = z.record(z.string(), z.never());
+export const zIuserValidatorOfIdentityUser = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityIPasswordValidatorOfIdentityUser = z.record(z.string(), z.never());
+export const zIPasswordValidatorOfIdentityUser = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityILookupNormalizer = z.record(z.string(), z.never());
+export const zILookupNormalizer = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityIdentityErrorDescriber = z.record(z.string(), z.never());
+export const zIdentityErrorDescriber = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityClaimsIdentityOptions = z.object({
+export const zClaimsIdentityOptions = z.object({
     roleClaimType: z.string().optional(),
     userNameClaimType: z.string().optional(),
     userIdClaimType: z.string().optional(),
@@ -98,12 +98,12 @@ export const zMicrosoftAspNetCoreIdentityClaimsIdentityOptions = z.object({
     securityStampClaimType: z.string().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityUserOptions = z.object({
+export const zUserOptions = z.object({
     allowedUserNameCharacters: z.string().optional(),
     requireUniqueEmail: z.boolean().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityPasswordOptions = z.object({
+export const zPasswordOptions = z.object({
     requiredLength: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional(),
     requiredUniqueChars: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional(),
     requireNonAlphanumeric: z.boolean().optional(),
@@ -112,25 +112,25 @@ export const zMicrosoftAspNetCoreIdentityPasswordOptions = z.object({
     requireDigit: z.boolean().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityLockoutOptions = z.object({
+export const zLockoutOptions = z.object({
     allowedForNewUsers: z.boolean().optional(),
     maxFailedAccessAttempts: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional(),
     defaultLockoutTimeSpan: z.string().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentitySignInOptions = z.object({
+export const zSignInOptions = z.object({
     requireConfirmedEmail: z.boolean().optional(),
     requireConfirmedPhoneNumber: z.boolean().optional(),
     requireConfirmedAccount: z.boolean().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityTokenProviderDescriptor = z.object({
+export const zTokenProviderDescriptor = z.object({
     providerType: z.string().optional(),
     providerInstance: z.unknown().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityTokenOptions = z.object({
-    providerMap: z.record(z.string(), zMicrosoftAspNetCoreIdentityTokenProviderDescriptor).optional(),
+export const zTokenOptions = z.object({
+    providerMap: z.record(z.string(), zTokenProviderDescriptor).optional(),
     emailConfirmationTokenProvider: z.string().optional(),
     passwordResetTokenProvider: z.string().optional(),
     changeEmailTokenProvider: z.string().optional(),
@@ -139,25 +139,25 @@ export const zMicrosoftAspNetCoreIdentityTokenOptions = z.object({
     authenticatorIssuer: z.string().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityStoreOptions = z.object({
+export const zStoreOptions = z.object({
     maxLengthForKeys: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional(),
     protectPersonalData: z.boolean().optional(),
     schemaVersion: z.string().optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityIdentityOptions = z.object({
-    claimsIdentity: zMicrosoftAspNetCoreIdentityClaimsIdentityOptions.optional(),
-    user: zMicrosoftAspNetCoreIdentityUserOptions.optional(),
-    password: zMicrosoftAspNetCoreIdentityPasswordOptions.optional(),
-    lockout: zMicrosoftAspNetCoreIdentityLockoutOptions.optional(),
-    signIn: zMicrosoftAspNetCoreIdentitySignInOptions.optional(),
-    tokens: zMicrosoftAspNetCoreIdentityTokenOptions.optional(),
-    stores: zMicrosoftAspNetCoreIdentityStoreOptions.optional()
+export const zIdentityOptions = z.object({
+    claimsIdentity: zClaimsIdentityOptions.optional(),
+    user: zUserOptions.optional(),
+    password: zPasswordOptions.optional(),
+    lockout: zLockoutOptions.optional(),
+    signIn: zSignInOptions.optional(),
+    tokens: zTokenOptions.optional(),
+    stores: zStoreOptions.optional()
 });
 
-export const zSystemIServiceProvider = z.record(z.string(), z.never());
+export const zIServiceProvider = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentityIdentityUserOfString = z.object({
+export const zIdentityUserOfString = z.object({
     id: z.string().nullish(),
     userName: z.string().nullish(),
     normalizedUserName: z.string().nullish(),
@@ -175,17 +175,17 @@ export const zMicrosoftAspNetCoreIdentityIdentityUserOfString = z.object({
     accessFailedCount: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityIdentityUser = zMicrosoftAspNetCoreIdentityIdentityUserOfString.and(z.object({}));
+export const zIdentityUser = zIdentityUserOfString.and(z.object({}));
 
-export const zMicrosoftAspNetCoreIdentityUserManagerOfIdentityUser = z.object({
-    logger: zMicrosoftExtensionsLoggingILogger.optional(),
-    passwordHasher: zMicrosoftAspNetCoreIdentityIPasswordHasherOfIdentityUser.optional(),
-    userValidators: z.array(zMicrosoftAspNetCoreIdentityIuserValidatorOfIdentityUser).optional(),
-    passwordValidators: z.array(zMicrosoftAspNetCoreIdentityIPasswordValidatorOfIdentityUser).optional(),
-    keyNormalizer: zMicrosoftAspNetCoreIdentityILookupNormalizer.optional(),
-    errorDescriber: zMicrosoftAspNetCoreIdentityIdentityErrorDescriber.optional(),
-    options: zMicrosoftAspNetCoreIdentityIdentityOptions.optional(),
-    serviceProvider: zSystemIServiceProvider.optional(),
+export const zUserManagerOfIdentityUser = z.object({
+    logger: zILogger.optional(),
+    passwordHasher: zIPasswordHasherOfIdentityUser.optional(),
+    userValidators: z.array(zIuserValidatorOfIdentityUser).optional(),
+    passwordValidators: z.array(zIPasswordValidatorOfIdentityUser).optional(),
+    keyNormalizer: zILookupNormalizer.optional(),
+    errorDescriber: zIdentityErrorDescriber.optional(),
+    options: zIdentityOptions.optional(),
+    serviceProvider: zIServiceProvider.optional(),
     supportsUserAuthenticationTokens: z.boolean().optional(),
     supportsUserAuthenticatorKey: z.boolean().optional(),
     supportsUserTwoFactorRecoveryCodes: z.boolean().optional(),
@@ -200,109 +200,109 @@ export const zMicrosoftAspNetCoreIdentityUserManagerOfIdentityUser = z.object({
     supportsUserLockout: z.boolean().optional(),
     supportsQueryableUsers: z.boolean().optional(),
     supportsUserPasskey: z.boolean().optional(),
-    users: z.array(zMicrosoftAspNetCoreIdentityIdentityUser).optional()
+    users: z.array(zIdentityUser).optional()
 });
 
-export const zMicrosoftAspNetCoreIdentityIuserClaimsPrincipalFactoryOfIdentityUser = z.record(z.string(), z.never());
+export const zIuserClaimsPrincipalFactoryOfIdentityUser = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreHttpHttpContext = z.record(z.string(), z.never());
+export const zHttpContext = z.record(z.string(), z.never());
 
-export const zMicrosoftAspNetCoreIdentitySignInManagerOfIdentityUser = z.object({
-    logger: zMicrosoftExtensionsLoggingILogger.optional(),
-    userManager: zMicrosoftAspNetCoreIdentityUserManagerOfIdentityUser.optional(),
-    claimsFactory: zMicrosoftAspNetCoreIdentityIuserClaimsPrincipalFactoryOfIdentityUser.optional(),
-    options: zMicrosoftAspNetCoreIdentityIdentityOptions.optional(),
+export const zSignInManagerOfIdentityUser = z.object({
+    logger: zILogger.optional(),
+    userManager: zUserManagerOfIdentityUser.optional(),
+    claimsFactory: zIuserClaimsPrincipalFactoryOfIdentityUser.optional(),
+    options: zIdentityOptions.optional(),
     authenticationScheme: z.string().optional(),
-    context: zMicrosoftAspNetCoreHttpHttpContext.optional()
+    context: zHttpContext.optional()
 });
 
-export const zServerModulesRoomsAddMembersAddMembersRequest = z.object({
+export const zAddMembersRequest = z.object({
     memberIds: z.array(z.string())
 });
 
-export const zFastEndpointsProblemDetailsError = z.object({
+export const zProblemDetailsError = z.object({
     name: z.string().optional().default('Error or field name'),
     reason: z.string().optional().default('Error reason'),
     code: z.string().nullish(),
     severity: z.string().nullish()
 });
 
-export const zFastEndpointsProblemDetails = z.object({
+export const zProblemDetails2 = z.object({
     type: z.string().optional().default('https://www.rfc-editor.org/rfc/rfc7231#section-6.5.1'),
     title: z.string().optional().default('One or more validation errors occurred.'),
     status: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional().default(400),
     instance: z.string().optional().default('/api/route'),
     traceId: z.string().optional().default('0HMPNHL0JHL76:00000001'),
     detail: z.string().nullish(),
-    errors: z.array(zFastEndpointsProblemDetailsError).optional()
+    errors: z.array(zProblemDetailsError).optional()
 });
 
-export const zServerModulesRoomsCreateDirectMessageCreateDirectMessageRequest = z.object({
-    recipientId: z.string().min(1)
+export const zCreateDirectMessageRequest = z.object({
+    recipientId: z.string().optional()
 });
 
-export const zServerModulesRoomsCreateRoomCreateRoomResponse = z.object({
-    roomId: z.string()
+export const zCreateRoomResponse = z.object({
+    roomId: z.string().optional()
 });
 
-export const zServerModulesRoomsCreateRoomCreateRoomRequest = z.object({
-    name: z.string()
+export const zCreateRoomRequest = z.object({
+    name: z.string().optional()
 });
 
-export const zServerModulesRoomsGetMessagesGetMessagesResponseMessageDto = z.object({
+export const zGetMessagesResponseMessageDto = z.object({
     id: z.string().optional(),
     content: z.string().optional(),
     senderId: z.string().optional(),
     timestamp: z.iso.datetime().optional()
 });
 
-export const zServerModulesRoomsGetMessagesGetMessagesResponse = z.object({
-    messages: z.array(zServerModulesRoomsGetMessagesGetMessagesResponseMessageDto).optional(),
+export const zGetMessagesResponse = z.object({
+    messages: z.array(zGetMessagesResponseMessageDto).optional(),
     nextCursor: z.string().nullish(),
     hasNextPage: z.boolean().optional()
 });
 
-export const zServerModulesRoomsGetMessagesGetMessagesRequest = z.record(z.string(), z.never());
+export const zGetMessagesRequest = z.record(z.string(), z.never());
 
-export const zServerModulesRoomsListRoomsRoomDto = z.object({
+export const zRoomDto = z.object({
     id: z.string(),
     name: z.string(),
     type: z.string()
 });
 
-export const zServerModulesRoomsListRoomsListRoomResponse = z.object({
-    rooms: z.array(zServerModulesRoomsListRoomsRoomDto).optional()
+export const zListRoomResponse = z.object({
+    rooms: z.array(zRoomDto).optional()
 });
 
-export const zServerModulesRoomsSendMessagesSendMessagesRequest = z.object({
-    content: z.string().min(1)
+export const zSendMessagesRequest = z.object({
+    content: z.string().optional()
 });
 
-export const zServerModulesUsersListUsersUserResponseDto = z.object({
+export const zUserResponseDto = z.object({
     id: z.string().optional(),
     username: z.string().optional(),
     lastSeenAt: z.iso.datetime().optional(),
     isOnline: z.boolean().optional()
 });
 
-export const zServerModulesUsersListUsersListUsersResponse = z.object({
-    data: z.array(zServerModulesUsersListUsersUserResponseDto).optional()
+export const zListUsersResponse = z.object({
+    data: z.array(zUserResponseDto).optional()
 });
 
-export const zPostRegisterBody = zMicrosoftAspNetCoreIdentityDataRegisterRequest;
+export const zPostRegisterBody = zRegisterRequest;
 
-export const zPostLoginBody = zMicrosoftAspNetCoreIdentityDataLoginRequest;
+export const zPostLoginBody = zLoginRequest;
 
 export const zPostLoginQuery = z.object({
     useCookies: z.boolean().nullish(),
     useSessionCookies: z.boolean().nullish()
 });
 
-export const zPostLoginResponse = zMicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse;
+export const zPostLoginResponse = zAccessTokenResponse;
 
-export const zPostRefreshBody = zMicrosoftAspNetCoreIdentityDataRefreshRequest;
+export const zPostRefreshBody = zRefreshRequest;
 
-export const zPostRefreshResponse = zMicrosoftAspNetCoreAuthenticationBearerTokenAccessTokenResponse;
+export const zPostRefreshResponse = zAccessTokenResponse;
 
 export const zGetConfirmEmailQuery = z.object({
     userId: z.string().nullable(),
@@ -310,25 +310,25 @@ export const zGetConfirmEmailQuery = z.object({
     changedEmail: z.string().nullish()
 });
 
-export const zPostResendConfirmationEmailBody = zMicrosoftAspNetCoreIdentityDataResendConfirmationEmailRequest;
+export const zPostResendConfirmationEmailBody = zResendConfirmationEmailRequest;
 
-export const zPostForgotPasswordBody = zMicrosoftAspNetCoreIdentityDataForgotPasswordRequest;
+export const zPostForgotPasswordBody = zForgotPasswordRequest;
 
-export const zPostResetPasswordBody = zMicrosoftAspNetCoreIdentityDataResetPasswordRequest;
+export const zPostResetPasswordBody = zResetPasswordRequest;
 
-export const zPostManage2FaBody = zMicrosoftAspNetCoreIdentityDataTwoFactorRequest;
+export const zPostManage2FaBody = zTwoFactorRequest;
 
-export const zPostManage2FaResponse = zMicrosoftAspNetCoreIdentityDataTwoFactorResponse;
+export const zPostManage2FaResponse = zTwoFactorResponse;
 
-export const zGetManageInfoResponse = zMicrosoftAspNetCoreIdentityDataInfoResponse;
+export const zGetManageInfoResponse = zInfoResponse;
 
-export const zPostManageInfoBody = zMicrosoftAspNetCoreIdentityDataInfoRequest;
+export const zPostManageInfoBody = zInfoRequest;
 
-export const zPostManageInfoResponse = zMicrosoftAspNetCoreIdentityDataInfoResponse;
+export const zPostManageInfoResponse = zInfoResponse;
 
-export const zPostLogoutBody = zMicrosoftAspNetCoreIdentitySignInManagerOfIdentityUser;
+export const zPostLogoutBody = zSignInManagerOfIdentityUser;
 
-export const zAddMembersBody = zServerModulesRoomsAddMembersAddMembersRequest;
+export const zAddMembersBody = zAddMembersRequest;
 
 export const zAddMembersPath = z.object({
     roomId: z.string()
@@ -339,7 +339,7 @@ export const zAddMembersPath = z.object({
  */
 export const zAddMembersResponse = z.void();
 
-export const zCreateDirectMessageBody = zServerModulesRoomsCreateDirectMessageCreateDirectMessageRequest;
+export const zCreateDirectMessageBody = zCreateDirectMessageRequest;
 
 /**
  * No Content
@@ -349,14 +349,14 @@ export const zCreateDirectMessageResponse = z.void();
 /**
  * Success
  */
-export const zListRoomsResponse = zServerModulesRoomsListRoomsListRoomResponse;
+export const zListRoomsResponse = zListRoomResponse;
 
-export const zCreateRoomBody = zServerModulesRoomsCreateRoomCreateRoomRequest;
+export const zCreateRoomBody = zCreateRoomRequest;
 
 /**
  * Success
  */
-export const zCreateRoomResponse = zServerModulesRoomsCreateRoomCreateRoomResponse;
+export const zCreateRoomResponse2 = zCreateRoomResponse;
 
 export const zGetMessagesPath = z.object({
     roomId: z.guid()
@@ -370,9 +370,9 @@ export const zGetMessagesQuery = z.object({
 /**
  * Success
  */
-export const zGetMessagesResponse = zServerModulesRoomsGetMessagesGetMessagesResponse;
+export const zGetMessagesResponse2 = zGetMessagesResponse;
 
-export const zSendMessagesBody = zServerModulesRoomsSendMessagesSendMessagesRequest;
+export const zSendMessagesBody = zSendMessagesRequest;
 
 export const zSendMessagesPath = z.object({
     roomId: z.guid()
@@ -386,4 +386,4 @@ export const zSendMessagesResponse = z.void();
 /**
  * Success
  */
-export const zListUsersResponse = zServerModulesUsersListUsersListUsersResponse;
+export const zListUsersResponse2 = zListUsersResponse;

@@ -4,7 +4,7 @@ import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOption
 
 import { client } from '../client.gen';
 import { addMembers, createDirectMessage, createRoom, getConfirmEmail, getManageInfo, getMessages, listRooms, listUsers, type Options, postForgotPassword, postLogin, postLogout, postManage2Fa, postManageInfo, postRefresh, postRegister, postResendConfirmationEmail, postResetPassword, sendMessages } from '../sdk.gen';
-import type { AddMembersData, AddMembersError, AddMembersResponse, CreateDirectMessageData, CreateDirectMessageError, CreateDirectMessageResponse, CreateRoomData, CreateRoomResponse, GetConfirmEmailData, GetManageInfoData, GetManageInfoError, GetManageInfoResponse, GetMessagesData, GetMessagesResponse, ListRoomsData, ListRoomsResponse, ListUsersData, ListUsersResponse, PostForgotPasswordData, PostForgotPasswordError, PostLoginData, PostLoginResponse, PostLogoutData, PostManage2FaData, PostManage2FaError, PostManage2FaResponse, PostManageInfoData, PostManageInfoError, PostManageInfoResponse, PostRefreshData, PostRefreshResponse, PostRegisterData, PostRegisterError, PostResendConfirmationEmailData, PostResetPasswordData, PostResetPasswordError, SendMessagesData, SendMessagesError, SendMessagesResponse } from '../types.gen';
+import type { AddMembersData, AddMembersError, AddMembersResponse, CreateDirectMessageData, CreateDirectMessageResponse, CreateRoomData, CreateRoomResponse2, GetConfirmEmailData, GetManageInfoData, GetManageInfoError, GetManageInfoResponse, GetMessagesData, GetMessagesResponse2, ListRoomsData, ListRoomsResponse, ListUsersData, ListUsersResponse2, PostForgotPasswordData, PostForgotPasswordError, PostLoginData, PostLoginResponse, PostLogoutData, PostManage2FaData, PostManage2FaError, PostManage2FaResponse, PostManageInfoData, PostManageInfoError, PostManageInfoResponse, PostRefreshData, PostRefreshResponse, PostRegisterData, PostRegisterError, PostResendConfirmationEmailData, PostResetPasswordData, PostResetPasswordError, SendMessagesData, SendMessagesResponse } from '../types.gen';
 
 export const postRegisterMutation = (options?: Partial<Options<PostRegisterData>>): UseMutationOptions<unknown, PostRegisterError, Options<PostRegisterData>> => {
     const mutationOptions: UseMutationOptions<unknown, PostRegisterError, Options<PostRegisterData>> = {
@@ -209,8 +209,8 @@ export const addMembersMutation = (options?: Partial<Options<AddMembersData>>): 
     return mutationOptions;
 };
 
-export const createDirectMessageMutation = (options?: Partial<Options<CreateDirectMessageData>>): UseMutationOptions<CreateDirectMessageResponse, CreateDirectMessageError, Options<CreateDirectMessageData>> => {
-    const mutationOptions: UseMutationOptions<CreateDirectMessageResponse, CreateDirectMessageError, Options<CreateDirectMessageData>> = {
+export const createDirectMessageMutation = (options?: Partial<Options<CreateDirectMessageData>>): UseMutationOptions<CreateDirectMessageResponse, DefaultError, Options<CreateDirectMessageData>> => {
+    const mutationOptions: UseMutationOptions<CreateDirectMessageResponse, DefaultError, Options<CreateDirectMessageData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createDirectMessage({
                 ...options,
@@ -238,8 +238,8 @@ export const listRoomsOptions = (options?: Options<ListRoomsData>) => queryOptio
     queryKey: listRoomsQueryKey(options)
 });
 
-export const createRoomMutation = (options?: Partial<Options<CreateRoomData>>): UseMutationOptions<CreateRoomResponse, DefaultError, Options<CreateRoomData>> => {
-    const mutationOptions: UseMutationOptions<CreateRoomResponse, DefaultError, Options<CreateRoomData>> = {
+export const createRoomMutation = (options?: Partial<Options<CreateRoomData>>): UseMutationOptions<CreateRoomResponse2, DefaultError, Options<CreateRoomData>> => {
+    const mutationOptions: UseMutationOptions<CreateRoomResponse2, DefaultError, Options<CreateRoomData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createRoom({
                 ...options,
@@ -254,7 +254,7 @@ export const createRoomMutation = (options?: Partial<Options<CreateRoomData>>): 
 
 export const getMessagesQueryKey = (options: Options<GetMessagesData>) => createQueryKey('getMessages', options);
 
-export const getMessagesOptions = (options: Options<GetMessagesData>) => queryOptions<GetMessagesResponse, DefaultError, GetMessagesResponse, ReturnType<typeof getMessagesQueryKey>>({
+export const getMessagesOptions = (options: Options<GetMessagesData>) => queryOptions<GetMessagesResponse2, DefaultError, GetMessagesResponse2, ReturnType<typeof getMessagesQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await getMessages({
             ...options,
@@ -299,7 +299,7 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
 export const getMessagesInfiniteQueryKey = (options: Options<GetMessagesData>): QueryKey<Options<GetMessagesData>> => createQueryKey('getMessages', options, true);
 
 export const getMessagesInfiniteOptions = (options: Options<GetMessagesData>) => {
-    const opts = infiniteQueryOptions<GetMessagesResponse, DefaultError, InfiniteData<GetMessagesResponse>, QueryKey<Options<GetMessagesData>>, string | null | Pick<QueryKey<Options<GetMessagesData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    const opts = infiniteQueryOptions<GetMessagesResponse2, DefaultError, InfiniteData<GetMessagesResponse2>, QueryKey<Options<GetMessagesData>>, string | null | Pick<QueryKey<Options<GetMessagesData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
     {
         queryFn: async ({ pageParam, queryKey, signal }) => {
@@ -323,8 +323,8 @@ export const getMessagesInfiniteOptions = (options: Options<GetMessagesData>) =>
     return opts as Omit<typeof opts, 'initialData'>;
 };
 
-export const sendMessagesMutation = (options?: Partial<Options<SendMessagesData>>): UseMutationOptions<SendMessagesResponse, SendMessagesError, Options<SendMessagesData>> => {
-    const mutationOptions: UseMutationOptions<SendMessagesResponse, SendMessagesError, Options<SendMessagesData>> = {
+export const sendMessagesMutation = (options?: Partial<Options<SendMessagesData>>): UseMutationOptions<SendMessagesResponse, DefaultError, Options<SendMessagesData>> => {
+    const mutationOptions: UseMutationOptions<SendMessagesResponse, DefaultError, Options<SendMessagesData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await sendMessages({
                 ...options,
@@ -339,7 +339,7 @@ export const sendMessagesMutation = (options?: Partial<Options<SendMessagesData>
 
 export const listUsersQueryKey = (options?: Options<ListUsersData>) => createQueryKey('listUsers', options);
 
-export const listUsersOptions = (options?: Options<ListUsersData>) => queryOptions<ListUsersResponse, DefaultError, ListUsersResponse, ReturnType<typeof listUsersQueryKey>>({
+export const listUsersOptions = (options?: Options<ListUsersData>) => queryOptions<ListUsersResponse2, DefaultError, ListUsersResponse2, ReturnType<typeof listUsersQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await listUsers({
             ...options,

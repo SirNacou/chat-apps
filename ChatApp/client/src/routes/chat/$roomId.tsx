@@ -59,7 +59,7 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 	const queryClient = useQueryClient();
 
 	const { data: roomsData } = useQuery({ ...listRoomsOptions(), retry: false });
-	const rooms = (roomsData ?? []).flatMap((r) => r.rooms);
+	const rooms = roomsData?.rooms ?? [];
 	const activeRoom = rooms.find((r) => r.id === roomId);
 
 	const usersQuery = useQuery({ ...listUsersOptions(), retry: false });
@@ -95,7 +95,7 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 			if (!old) return old;
 			const pages = old.pages.map((p, i) =>
 				i === old.pages.length - 1
-					? { ...p, messages: [...p.messages, message] }
+					? { ...p, messages: [...(p.messages ?? []), message] }
 					: p,
 			);
 			return { ...old, pages };
@@ -119,19 +119,20 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 		try {
 			await sendMutation.mutateAsync({
 				path: { roomId },
-				body: { content } as never,
+				body: { content },
 			});
 		} catch (error) {
 			toast.error(getApiErrorMessage(error as never));
 		}
 	};
 
-	const allMessages = query.data?.pages.flatMap((p) => p.messages) ?? [];
+	const allMessages = query.data?.pages.flatMap((p) => p.messages ?? []) ?? [];
 	const bottomRef = useRef<HTMLDivElement>(null);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll to bottom when the message list changes
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: "auto" });
-	}, [allMessages.length]);
+	}, [allMessages]);
 
 	if (query.isLoading) {
 		return (
@@ -167,7 +168,11 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 								key={message.id}
 								message={message}
 								isOwn={message.senderId === currentUserId}
-								senderName={messagesBySender.get(message.senderId) ?? "Unknown"}
+								senderName={
+									(message.senderId &&
+										messagesBySender.get(message.senderId)) ||
+									"Unknown"
+								}
 								showSender
 							/>
 						))}

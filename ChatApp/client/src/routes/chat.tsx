@@ -1,36 +1,36 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { listRoomsOptions } from "@/client/@tanstack/react-query.gen";
+import { listRoomsOptions } from "@/client/@tanstack/react-query.gen"
+import { useQuery } from "@tanstack/react-query"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 
-import { ChatSidebar } from "@/components/ChatSidebar";
-import { RoomHeader } from "@/components/RoomHeader";
-import { useAuth } from "@/hooks/useAuth";
+import { ChatSidebar } from "@/components/ChatSidebar"
+import { RoomHeader } from "@/components/RoomHeader"
+import { useAuth } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/chat")({
 	component: ChatLayout,
-});
+})
 
 function ChatLayout() {
-	const navigate = useNavigate();
-	const auth = useAuth();
+	const navigate = useNavigate()
+	const auth = useAuth()
 
 	useEffect(() => {
-		if (auth.isError) navigate({ to: "/login" });
-	}, [auth.isError, navigate]);
+		if (auth.isError) navigate({ to: "/login" })
+	}, [auth.isError, navigate])
 
 	if (auth.isPending || auth.isError || !auth.data) {
-		return <div className="min-h-screen" />;
+		return <div className="min-h-screen" />
 	}
 
-	return <ChatRooms email={auth.data.email} />;
+	return <ChatRooms email={auth.data.email} />
 }
 
 function ChatRooms({ email }: { email: string }) {
-	const navigate = useNavigate();
-	const { data } = useQuery({ ...listRoomsOptions(), retry: false });
+	const navigate = useNavigate()
+	const { data } = useQuery({ ...listRoomsOptions(), retry: false })
 
-	const rooms = (data ?? []).flatMap((r) => r.rooms);
+	const rooms = (data?.rooms ?? [])
 
 	return (
 		<div className="flex h-screen">
@@ -61,5 +61,5 @@ function ChatRooms({ email }: { email: string }) {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

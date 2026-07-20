@@ -1,8 +1,3 @@
-import { useForm } from "@tanstack/react-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Link, useNavigate } from "@tanstack/react-router"
-import { Plus } from "lucide-react"
-import { toast } from "sonner"
 import {
 	createRoomMutation,
 	listRoomsOptions,
@@ -22,6 +17,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { getApiErrorMessage } from "@/lib/api"
+import { useForm } from "@tanstack/react-form"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { Plus } from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
 
 interface ChatSidebarProps {
 	rooms: RoomDto[]
@@ -32,6 +33,7 @@ export function ChatSidebar({ rooms, activeRoomId }: ChatSidebarProps) {
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
 	const createRoom = useMutation({ ...createRoomMutation() })
+	const [open, setOpen] = useState(false)
 
 	const form = useForm({
 		defaultValues: { name: "" },
@@ -57,7 +59,7 @@ export function ChatSidebar({ rooms, activeRoomId }: ChatSidebarProps) {
 		<aside className="flex w-64 shrink-0 flex-col border-r bg-card">
 			<div className="flex items-center justify-between border-b p-3">
 				<h2 className="text-sm font-semibold">Rooms</h2>
-				<Dialog>
+				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogTrigger asChild>
 						<Button size="icon-sm" variant="ghost">
 							<Plus className="size-4" />
@@ -72,6 +74,7 @@ export function ChatSidebar({ rooms, activeRoomId }: ChatSidebarProps) {
 								e.preventDefault()
 								e.stopPropagation()
 								form.handleSubmit()
+								setOpen(false)
 							}}
 							className="flex flex-col gap-4"
 						>

@@ -17,7 +17,7 @@ internal class RoomMemberConfiguration : IEntityTypeConfiguration<RoomMember>
             .HasForeignKey(rm => rm.RoomId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<IdentityUser>()
+        builder.HasOne<ChatUser>()
             .WithMany()
             .HasForeignKey(rm => rm.UserId)
             .OnDelete(DeleteBehavior.Cascade);
