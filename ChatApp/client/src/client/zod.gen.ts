@@ -170,7 +170,7 @@ export const zIdentityUserOfString = z.object({
     phoneNumber: z.string().nullish(),
     phoneNumberConfirmed: z.boolean().optional(),
     twoFactorEnabled: z.boolean().optional(),
-    lockoutEnd: z.iso.datetime().nullish(),
+    lockoutEnd: z.iso.datetime({ offset: true }).nullish(),
     lockoutEnabled: z.boolean().optional(),
     accessFailedCount: z.int().min(-2147483648, { error: 'Invalid value: Expected int32 to be >= -2147483648' }).max(2147483647, { error: 'Invalid value: Expected int32 to be <= 2147483647' }).optional()
 });
@@ -253,7 +253,7 @@ export const zGetMessagesResponseMessageDto = z.object({
     id: z.string().optional(),
     content: z.string().optional(),
     senderId: z.string().optional(),
-    timestamp: z.iso.datetime().optional()
+    timestamp: z.iso.datetime({ offset: true }).optional()
 });
 
 export const zGetMessagesResponse = z.object({
@@ -281,7 +281,7 @@ export const zSendMessagesRequest = z.object({
 export const zUserResponseDto = z.object({
     id: z.string().optional(),
     username: z.string().optional(),
-    lastSeenAt: z.iso.datetime().optional(),
+    lastSeenAt: z.iso.datetime({ offset: true }).optional(),
     isOnline: z.boolean().optional()
 });
 

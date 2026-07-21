@@ -7,7 +7,12 @@ export default defineConfig({
     '@hey-api/typescript',
     { name: '@hey-api/sdk', validator: true },
     { name: '@hey-api/client-ky', runtimeConfigPath: "./src/hey-api" },
-    'zod',
+    {
+      name: 'zod',
+      dates: {
+        offset: true,
+      }
+    },
     '@tanstack/react-query',
   ],
   logs: {

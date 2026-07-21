@@ -1,29 +1,29 @@
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { postLoginMutation } from "@/client/@tanstack/react-query.gen";
-import { zLoginRequest } from "@/client/zod.gen";
+import { useForm } from "@tanstack/react-form"
+import { useMutation } from "@tanstack/react-query"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { toast } from "sonner"
+import { postLoginMutation } from "@/client/@tanstack/react-query.gen"
+import { zLoginRequest } from "@/client/zod.gen"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { getApiErrorMessage } from "@/lib/api";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { getApiErrorMessage } from "@/lib/api"
 
 export const Route = createFileRoute("/login")({
 	component: LoginPage,
-});
+})
 
 function LoginPage() {
-	const navigate = useNavigate();
-	const mutation = useMutation({ ...postLoginMutation() });
+	const navigate = useNavigate()
+	const mutation = useMutation({ ...postLoginMutation() })
 
 	const form = useForm({
 		defaultValues: {
@@ -38,14 +38,14 @@ function LoginPage() {
 				await mutation.mutateAsync({
 					body: value,
 					query: { useCookies: true },
-				});
-				toast.success("Signed in");
-				navigate({ to: "/chat" });
+				})
+				toast.success("Signed in")
+				navigate({ to: "/chat" })
 			} catch (error) {
-				toast.error(getApiErrorMessage(error as never));
+				toast.error(getApiErrorMessage(error as never))
 			}
 		},
-	});
+	})
 
 	return (
 		<div className="flex min-h-screen items-center justify-center p-4">
@@ -59,9 +59,9 @@ function LoginPage() {
 				<CardContent>
 					<form
 						onSubmit={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							form.handleSubmit();
+							e.preventDefault()
+							e.stopPropagation()
+							form.handleSubmit()
 						}}
 						className="flex flex-col gap-4"
 					>
@@ -115,16 +115,16 @@ function LoginPage() {
 
 						<p className="text-center text-sm text-muted-foreground">
 							No account?{" "}
-							<a
+							<Link
 								className="underline underline-offset-4 hover:text-foreground"
-								href="/register"
+								to="/register"
 							>
 								Create one
-							</a>
+							</Link>
 						</p>
 					</form>
 				</CardContent>
 			</Card>
 		</div>
-	);
+	)
 }

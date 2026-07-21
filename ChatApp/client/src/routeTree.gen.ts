@@ -9,20 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ChatRouteImport } from './routes/chat'
+import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as ChatRoomIdRouteImport } from './routes/chat/$roomId'
+import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
+import { Route as ProtectedChatIndexRouteImport } from './routes/_protected/chat/index'
+import { Route as ProtectedChatRoomIdRouteImport } from './routes/_protected/chat/$roomId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
+const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -35,63 +30,73 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChatRoomIdRoute = ChatRoomIdRouteImport.update({
-  id: '/$roomId',
-  path: '/$roomId',
-  getParentRoute: () => ChatRoute,
+const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
+const ProtectedChatIndexRoute = ProtectedChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
+const ProtectedChatRoomIdRoute = ProtectedChatRoomIdRouteImport.update({
+  id: '/chat/$roomId',
+  path: '/chat/$roomId',
+  getParentRoute: () => ProtectedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/chat': typeof ChatRouteWithChildren
+  '/': typeof ProtectedIndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/chat/$roomId': typeof ChatRoomIdRoute
+  '/chat/$roomId': typeof ProtectedChatRoomIdRoute
+  '/chat/': typeof ProtectedChatIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/chat': typeof ChatRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/chat/$roomId': typeof ChatRoomIdRoute
+  '/': typeof ProtectedIndexRoute
+  '/chat/$roomId': typeof ProtectedChatRoomIdRoute
+  '/chat': typeof ProtectedChatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/chat': typeof ChatRouteWithChildren
+  '/_protected': typeof ProtectedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/chat/$roomId': typeof ChatRoomIdRoute
+  '/_protected/': typeof ProtectedIndexRoute
+  '/_protected/chat/$roomId': typeof ProtectedChatRoomIdRoute
+  '/_protected/chat/': typeof ProtectedChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat' | '/login' | '/register' | '/chat/$roomId'
+  fullPaths: '/' | '/login' | '/register' | '/chat/$roomId' | '/chat/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat' | '/login' | '/register' | '/chat/$roomId'
-  id: '__root__' | '/' | '/chat' | '/login' | '/register' | '/chat/$roomId'
+  to: '/login' | '/register' | '/' | '/chat/$roomId' | '/chat'
+  id:
+    | '__root__'
+    | '/_protected'
+    | '/login'
+    | '/register'
+    | '/_protected/'
+    | '/_protected/chat/$roomId'
+    | '/_protected/chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ChatRoute: typeof ChatRouteWithChildren
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_protected': {
+      id: '/_protected'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
+      preLoaderRoute: typeof ProtectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -108,29 +113,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat/$roomId': {
-      id: '/chat/$roomId'
-      path: '/$roomId'
+    '/_protected/': {
+      id: '/_protected/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/chat/': {
+      id: '/_protected/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ProtectedChatIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/chat/$roomId': {
+      id: '/_protected/chat/$roomId'
+      path: '/chat/$roomId'
       fullPath: '/chat/$roomId'
-      preLoaderRoute: typeof ChatRoomIdRouteImport
-      parentRoute: typeof ChatRoute
+      preLoaderRoute: typeof ProtectedChatRoomIdRouteImport
+      parentRoute: typeof ProtectedRouteRoute
     }
   }
 }
 
-interface ChatRouteChildren {
-  ChatRoomIdRoute: typeof ChatRoomIdRoute
+interface ProtectedRouteRouteChildren {
+  ProtectedIndexRoute: typeof ProtectedIndexRoute
+  ProtectedChatRoomIdRoute: typeof ProtectedChatRoomIdRoute
+  ProtectedChatIndexRoute: typeof ProtectedChatIndexRoute
 }
 
-const ChatRouteChildren: ChatRouteChildren = {
-  ChatRoomIdRoute: ChatRoomIdRoute,
+const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
+  ProtectedIndexRoute: ProtectedIndexRoute,
+  ProtectedChatRoomIdRoute: ProtectedChatRoomIdRoute,
+  ProtectedChatIndexRoute: ProtectedChatIndexRoute,
 }
 
-const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
+const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
+  ProtectedRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ChatRoute: ChatRouteWithChildren,
+  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
 }

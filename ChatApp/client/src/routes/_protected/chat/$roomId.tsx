@@ -5,13 +5,9 @@ import {
 	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
-import {
-	createFileRoute,
-	useNavigate,
-	useParams,
-} from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
 	getMessagesInfiniteOptions,
@@ -23,8 +19,7 @@ import type {
 	GetMessagesResponse,
 	GetMessagesResponseMessageDto,
 } from "@/client/types.gen";
-
-import { ChatSidebar } from "@/components/ChatSidebar";
+import { AddMembersDialog } from "@/components/AddMembersDialog";
 import { MessageBubble } from "@/components/MessageBubble";
 import { MessageInput } from "@/components/MessageInput";
 import { RoomHeader } from "@/components/RoomHeader";
@@ -33,12 +28,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { type PresenceUpdate, useChatHub } from "@/hooks/useChatHub";
 import { getApiErrorMessage } from "@/lib/api";
 
-export const Route = createFileRoute("/chat/$roomId")({
+export const Route = createFileRoute("/_protected/chat/$roomId")({
 	component: RoomView,
 });
 
 function RoomView() {
-	const { roomId } = useParams({ from: "/chat/$roomId" });
+	const { roomId } = Route.useParams();
 	const navigate = useNavigate();
 	const auth = useAuth();
 
@@ -50,13 +45,20 @@ function RoomView() {
 		return <div className="min-h-screen" />;
 	}
 
-	return <RoomViewInner roomId={roomId} email={auth.data.email} />;
+	return <RoomViewInner auth={auth} roomId={roomId} />;
 }
 
 type MessagesInfinite = InfiniteData<GetMessagesResponse, unknown>;
 
-function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
+function RoomViewInner({
+	auth,
+	roomId,
+}: {
+	auth: ReturnType<typeof useAuth>;
+	roomId: string;
+}) {
 	const queryClient = useQueryClient();
+	const [addMembersOpen, setAddMembersOpen] = useState(false);
 
 	const { data: roomsData } = useQuery({ ...listRoomsOptions(), retry: false });
 	const rooms = roomsData?.rooms ?? [];
@@ -64,9 +66,11 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 
 	const usersQuery = useQuery({ ...listUsersOptions(), retry: false });
 	const currentUserId = useMemo(() => {
-		const me = usersQuery.data?.data?.find((u) => u.username === email);
+		const me = usersQuery.data?.data?.find(
+			(u) => u.username === auth.data?.email,
+		);
 		return me?.id;
-	}, [usersQuery.data, email]);
+	}, [usersQuery.data, auth.data?.email]);
 
 	const messagesQueryKey = getMessagesInfiniteOptions({
 		path: { roomId },
@@ -76,8 +80,8 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 	const query = useInfiniteQuery({
 		...getMessagesInfiniteOptions({ path: { roomId }, query: { limit: 50 } }),
 		retry: false,
-		getNextPageParam: (lastPage) =>
-			lastPage.hasNextPage ? (lastPage.nextCursor ?? undefined) : undefined,
+		initialPageParam: "",
+		getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
 	});
 
 	const sendMutation = useMutation({ ...sendMessagesMutation() });
@@ -104,7 +108,11 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 
 	const { connected } = useChatHub({
 		roomId,
-		onMessage: (message) => appendMessage(message),
+		onMessage: (message) => {
+			if (message.senderId !== currentUserId) {
+				appendMessage(message);
+			}
+		},
 		onPresence: (_: PresenceUpdate) => {},
 	});
 
@@ -136,51 +144,59 @@ function RoomViewInner({ roomId, email }: { roomId: string; email: string }) {
 
 	if (query.isLoading) {
 		return (
-			<div className="flex h-screen items-center justify-center">
+			<div className="flex flex-1 items-center justify-center">
 				<Loader2 className="size-6 animate-spin text-muted-foreground" />
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex h-screen">
-			<ChatSidebar rooms={rooms} activeRoomId={roomId} />
-			<div className="flex flex-1 flex-col">
-				<RoomHeader room={activeRoom} email={email} connected={connected} />
-				<ScrollArea className="flex-1 p-4">
-					<div className="flex flex-col gap-3">
-						{query.hasNextPage && (
-							<div className="flex justify-center">
-								<button
-									type="button"
-									className="text-xs text-muted-foreground hover:text-foreground"
-									onClick={() => query.fetchNextPage()}
-									disabled={query.isFetchingNextPage}
-								>
-									{query.isFetchingNextPage
-										? "Loading older..."
-										: "Load older messages"}
-								</button>
-							</div>
-						)}
-						{allMessages.map((message) => (
-							<MessageBubble
-								key={message.id}
-								message={message}
-								isOwn={message.senderId === currentUserId}
-								senderName={
-									(message.senderId &&
-										messagesBySender.get(message.senderId)) ||
-									"Unknown"
-								}
-								showSender
-							/>
-						))}
-						<div ref={bottomRef} />
-					</div>
-				</ScrollArea>
-				<MessageInput onSend={handleSend} disabled={!connected} />
-			</div>
-		</div>
+		<>
+			<RoomHeader
+				room={activeRoom}
+				connected={connected}
+				email={auth.data?.email}
+				users={usersQuery.data?.data}
+				onAddMembers={() => setAddMembersOpen(true)}
+			/>
+			<ScrollArea className="flex-1 p-4">
+				<div className="flex flex-col gap-3">
+					{query.hasNextPage && (
+						<div className="flex justify-center">
+							<button
+								type="button"
+								className="text-xs text-muted-foreground hover:text-foreground"
+								onClick={() => query.fetchNextPage()}
+								disabled={query.isFetchingNextPage}
+							>
+								{query.isFetchingNextPage
+									? "Loading older..."
+									: "Load older messages"}
+							</button>
+						</div>
+					)}
+					{allMessages.map((message) => (
+						<MessageBubble
+							key={message.id}
+							message={message}
+							isOwn={message.senderId === currentUserId}
+							senderName={
+								(message.senderId && messagesBySender.get(message.senderId)) ||
+								"Unknown"
+							}
+							showSender
+						/>
+					))}
+					<div ref={bottomRef} />
+				</div>
+			</ScrollArea>
+			<MessageInput onSend={handleSend} disabled={!connected} />
+			<AddMembersDialog
+				roomId={roomId}
+				open={addMembersOpen}
+				onOpenChange={setAddMembersOpen}
+				currentUserEmail={auth.data?.email}
+			/>
+		</>
 	);
 }

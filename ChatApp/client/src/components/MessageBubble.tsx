@@ -1,18 +1,18 @@
-import type { GetMessagesResponseMessageDto } from "@/client/types.gen";
-import { cn } from "@/lib/utils";
-import { UserAvatar } from "./UserAvatar";
+import type { GetMessagesResponseMessageDto } from "@/client/types.gen"
+import { cn } from "@/lib/utils"
+import { UserAvatar } from "./UserAvatar"
 
 interface MessageBubbleProps {
-	message: GetMessagesResponseMessageDto;
-	isOwn: boolean;
-	senderName: string;
-	showSender?: boolean;
+	message: GetMessagesResponseMessageDto
+	isOwn: boolean
+	senderName: string
+	showSender?: boolean
 }
 
 function formatTime(timestamp: string): string {
-	const date = new Date(timestamp);
-	if (Number.isNaN(date.getTime())) return "";
-	return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+	const date = new Date(timestamp)
+	if (Number.isNaN(date.getTime())) return ""
+	return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
 }
 
 export function MessageBubble({
@@ -45,9 +45,9 @@ export function MessageBubble({
 					{message.content}
 				</div>
 				<span className="px-1 text-[10px] text-muted-foreground">
-					{formatTime(message.timestamp)}
+					{formatTime(message.timestamp!)}
 				</span>
 			</div>
 		</div>
-	);
+	)
 }

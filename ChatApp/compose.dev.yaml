@@ -44,12 +44,11 @@ services:
       watch:
         - path: ./client/package.json
           action: rebuild
-        - path: ./client/bun.lock
-          action: rebuild
         - path: ./client
           action: sync
           target: /app
           ignore:
-            - /app/node_modules
+            - /app/package.json
             - /app/dist
             - /app/.tanstack
+            - /app/node_modules
