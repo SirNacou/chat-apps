@@ -2,5 +2,5 @@
 
 obj/
 bin/
-ChatApp/.env
 ChatApp/ChatApp.sln.DotSettings
+*/.env

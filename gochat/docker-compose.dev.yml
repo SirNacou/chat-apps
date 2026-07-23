@@ -1,0 +1,21 @@
+services:
+  gochat_server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      - ENVIRONMENT=development
+    develop:
+      watch:
+        - action: sync
+          path: ./server
+          target: /app
+          ignore:
+            - ./server/tmp/
+            - .git/
+
+        - action: rebuild
+          path: go.mod
+        - action: rebuild
+          path: go.sum
